@@ -32,6 +32,7 @@ export default function SignupPage() {
           email,
           password,
           options: {
+            emailRedirectTo: typeof window !== 'undefined' ? `${window.location.origin}/dashboard` : undefined,
             data: {
               full_name: name,
               course,
@@ -39,6 +40,7 @@ export default function SignupPage() {
             },
           },
         });
+
 
         if (error) {
           setErrorMsg(error.message);
