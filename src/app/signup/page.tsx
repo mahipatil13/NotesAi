@@ -6,9 +6,11 @@ import { useRouter } from 'next/navigation';
 import { GraduationCap, ArrowRight, Lock, Mail, User, BookOpen } from 'lucide-react';
 
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
+import { useSmartStudyStore } from '@/lib/store';
 
 export default function SignupPage() {
   const router = useRouter();
+  const { loginUser } = useSmartStudyStore();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -46,6 +48,7 @@ export default function SignupPage() {
 
         // Check if session exists or confirmation email sent
         if (data?.session) {
+          loginUser(email, name);
           router.push('/dashboard');
           return;
         } else if (data?.user && !data.session) {
@@ -55,6 +58,7 @@ export default function SignupPage() {
         }
       }
 
+      loginUser(email, name);
       router.push('/dashboard');
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Failed to sign up';
@@ -63,6 +67,7 @@ export default function SignupPage() {
       setLoading(false);
     }
   };
+
 
   return (
     <div className="min-h-screen flex flex-col justify-center items-center bg-[#f8fafc] text-slate-900 px-4 py-12">

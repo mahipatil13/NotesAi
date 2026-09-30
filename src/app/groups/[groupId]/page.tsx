@@ -30,14 +30,17 @@ export default function GroupWorkspacePage({
 }) {
   const resolvedParams = use(params);
   const groupId = resolvedParams.groupId;
-  const { studyGroups, joinStudyGroup, addGroupMessage, addGroupNote, personalDocs, notes } = useSmartStudyStore();
+  const { user, studyGroups, joinStudyGroup, addGroupMessage, addGroupNote, personalDocs, notes } = useSmartStudyStore();
 
   const group = studyGroups.find((g) => g.id === groupId);
 
-  const currentUser = { name: 'Mahesh Patil', email: 'mahesh@college.edu' };
+  const currentUser = user.isLoggedIn
+    ? { name: user.name, email: user.email }
+    : { name: 'Guest User', email: 'guest@college.edu' };
   const isMember = group?.members.some(
-    (m) => m.name === currentUser.name || m.email === currentUser.email
+    (m) => m.name === currentUser.name || (currentUser.email && m.email === currentUser.email)
   );
+
 
   const [activeTab, setActiveTab] = useState<'notes' | 'discussion' | 'members'>('notes');
   const [copiedCode, setCopiedCode] = useState(false);

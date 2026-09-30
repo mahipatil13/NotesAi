@@ -78,8 +78,9 @@ export default function LibraryPage() {
   const [uploadSubjectId, setUploadSubjectId] = useState('');
   const [uploadTitle, setUploadTitle] = useState('');
   const [uploadDescription, setUploadDescription] = useState('');
-  const [uploadUploader, setUploadUploader] = useState(user.name || 'Mahesh Patil');
+  const [uploadUploader, setUploadUploader] = useState(user.name || '');
   const [uploadSuccessMessage, setUploadSuccessMessage] = useState(false);
+
 
   // Drag and drop file contribution state
   const [stagedFile, setStagedFile] = useState<File | null>(null);
@@ -322,10 +323,11 @@ export default function LibraryPage() {
         semesterNumber: uploadSemester,
         title: uploadTitle.trim(),
         description: uploadDescription.trim() || 'Community-contributed lecture notes for semester examination preparation.',
-        uploaderName: uploadUploader.trim() || user.name || 'Mahesh Patil',
-        uploaderId: user.id,
-        uploaderEmail: user.email,
+        uploaderName: uploadUploader.trim() || user.name || 'Anonymous Student',
+        uploaderId: user.id || `usr-${Date.now()}`,
+        uploaderEmail: user.email || '',
         pages: finalPages,
+
         fileSize: fileSizeStr,
         status: 'PENDING', // Public notes require Superadmin approval to push to server
         tags: ['Contributed', uploadDept.toUpperCase(), `Sem ${uploadSemester}`, 'Exam Pack'],
@@ -1131,8 +1133,9 @@ export default function LibraryPage() {
                 </div>
                 <h4 className="font-bold text-base text-slate-900">Submitted for Superadmin Review!</h4>
                 <p className="text-xs text-slate-600 max-w-sm mx-auto leading-relaxed">
-                  Your notes and auto-generated AI exam pack have been queued for moderation. Mahesh (Superadmin) will review and approve them before they appear publicly.
+                  Your notes and auto-generated AI exam pack have been queued for moderation. The Superadmin will review and approve them before they appear publicly.
                 </p>
+
                 <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-amber-700 bg-amber-50 px-3 py-1 rounded-full border border-amber-200">
                   <Clock className="w-3 h-3 text-amber-600" />
                   Status: Pending Approval
@@ -1281,7 +1284,7 @@ export default function LibraryPage() {
                   <label className="block text-slate-700 font-medium mb-1">Contributor Name</label>
                   <input
                     type="text"
-                    placeholder="Mahesh Patil"
+                    placeholder="Your Name (e.g. Alex Sharma)"
                     value={uploadUploader}
                     onChange={(e) => setUploadUploader(e.target.value)}
                     className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-slate-800 focus:outline-none focus:border-indigo-500"
@@ -1292,9 +1295,10 @@ export default function LibraryPage() {
                 <div className="p-3 bg-amber-50/80 border border-amber-200/80 rounded-xl flex items-start gap-2 text-[11px] text-amber-800">
                   <ShieldCheck className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
                   <span>
-                    <strong>Superadmin Moderation Notice:</strong> Contributed materials are reviewed and approved by Superadmin (Mahesh) before appearing in the public library.
+                    <strong>Superadmin Moderation Notice:</strong> Contributed materials are reviewed and approved by Superadmin before appearing in the public library.
                   </span>
                 </div>
+
 
                 <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
                   <button

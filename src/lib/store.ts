@@ -31,6 +31,8 @@ import {
   subscribeToSupabaseNotes 
 } from './supabaseSync';
 
+import { supabase, isSupabaseConfigured } from './supabase';
+
 const STORAGE_KEYS = {
   USER: 'smart_study_user',
   TODOS: 'smart_study_todos',
@@ -45,13 +47,25 @@ const STORAGE_KEYS = {
   USAGE: 'smart_study_usage',
 };
 
+export const SUPERADMIN_EMAILS = [
+  'mahipatil13@gmail.com',
+  'mahesh@college.edu',
+  'maheshpatil13@gmail.com',
+];
+
+export function isSuperadminEmail(email?: string): boolean {
+  if (!email) return false;
+  return SUPERADMIN_EMAILS.some((e) => e.toLowerCase() === email.trim().toLowerCase());
+}
+
 const DEFAULT_USER: User = {
-  id: 'usr-mahesh',
-  name: 'Mahesh Patil',
-  email: 'mahesh@college.edu',
-  role: 'superadmin', // starts with superadmin capability so user can access /admin immediately, switchable to student
-  isLoggedIn: true,
+  id: '',
+  name: 'Guest User',
+  email: '',
+  role: 'student',
+  isLoggedIn: false,
 };
+
 
 const DEFAULT_TODOS: TodoItem[] = [
   {
@@ -301,13 +315,64 @@ export function useSmartStudyStore() {
     };
   }, []);
 
+  // Supabase Auth session listener
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    if (isSupabaseConfigured()) {
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        if (session?.user) {
+          const userEmail = session.user.email || '';
+          const userName = session.user.user_metadata?.full_name || userEmail.split('@')[0] || 'Student';
+          const role = isSuperadminEmail(userEmail) ? 'superadmin' : 'student';
+          const u: User = {
+            id: session.user.id,
+            name: userName,
+            email: userEmail,
+            role,
+            isLoggedIn: true,
+          };
+          saveUser(u);
+        }
+      });
+
+      const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+        if (session?.user) {
+          const userEmail = session.user.email || '';
+          const userName = session.user.user_metadata?.full_name || userEmail.split('@')[0] || 'Student';
+          const role = isSuperadminEmail(userEmail) ? 'superadmin' : 'student';
+          const u: User = {
+            id: session.user.id,
+            name: userName,
+            email: userEmail,
+            role,
+            isLoggedIn: true,
+          };
+          saveUser(u);
+        } else {
+          // If no local custom session exists, reset to logged-out guest
+          const stored = localStorage.getItem(STORAGE_KEYS.USER);
+          if (!stored || JSON.parse(stored).email === '') {
+            setUser(DEFAULT_USER);
+          }
+        }
+      });
+
+      return () => {
+        subscription.unsubscribe();
+      };
+    }
+  }, []);
+
   // Auth actions
-  const loginUser = (email: string, name = 'Mahesh Patil', role: 'student' | 'superadmin' = 'superadmin') => {
+  const loginUser = (email: string, name?: string, role?: 'student' | 'superadmin') => {
+    const userRole = role || (isSuperadminEmail(email) ? 'superadmin' : 'student');
+    const userName = name || (email.split('@')[0] ? email.split('@')[0].charAt(0).toUpperCase() + email.split('@')[0].slice(1) : 'Student');
     const updated: User = {
       id: `usr-${Date.now()}`,
-      name,
+      name: userName,
       email,
-      role,
+      role: userRole,
       isLoggedIn: true,
     };
     saveUser(updated);
@@ -315,6 +380,13 @@ export function useSmartStudyStore() {
   };
 
   const logoutUser = () => {
+    if (isSupabaseConfigured()) {
+      try {
+        supabase.auth.signOut();
+      } catch (e) {
+        console.error('Error signing out of Supabase', e);
+      }
+    }
     const updated: User = {
       id: '',
       name: 'Guest User',

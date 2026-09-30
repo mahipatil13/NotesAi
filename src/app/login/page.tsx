@@ -6,9 +6,11 @@ import { useRouter } from 'next/navigation';
 import { GraduationCap, ArrowRight, Lock, Mail } from 'lucide-react';
 
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
+import { useSmartStudyStore } from '@/lib/store';
 
 export default function LoginPage() {
   const router = useRouter();
+  const { loginUser } = useSmartStudyStore();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -21,7 +23,7 @@ export default function LoginPage() {
 
     try {
       if (isSupabaseConfigured()) {
-        const { error } = await supabase.auth.signInWithPassword({
+        const { data, error } = await supabase.auth.signInWithPassword({
           email,
           password,
         });
@@ -31,6 +33,11 @@ export default function LoginPage() {
           setLoading(false);
           return;
         }
+
+        const name = data?.user?.user_metadata?.full_name || email.split('@')[0];
+        loginUser(email, name);
+      } else {
+        loginUser(email);
       }
       
       router.push('/dashboard');
@@ -41,6 +48,7 @@ export default function LoginPage() {
       setLoading(false);
     }
   };
+
 
   return (
     <div className="min-h-screen flex flex-col justify-center items-center bg-[#f8fafc] text-slate-900 px-4 py-12">

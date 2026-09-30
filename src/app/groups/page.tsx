@@ -21,7 +21,8 @@ import {
 } from 'lucide-react';
 
 export default function StudyGroupsPage() {
-  const { studyGroups, createStudyGroup, joinStudyGroup, departments } = useSmartStudyStore();
+  const { user, studyGroups, createStudyGroup, joinStudyGroup, departments } = useSmartStudyStore();
+
 
   const [isJoinOpen, setIsJoinOpen] = useState(false);
   const [inviteCodeInput, setInviteCodeInput] = useState('');
@@ -32,7 +33,7 @@ export default function StudyGroupsPage() {
   const [newGroupDesc, setNewGroupDesc] = useState('');
   const [newGroupDept, setNewGroupDept] = useState(departments[0]?.code || 'CSE');
   const [newGroupSem, setNewGroupSem] = useState(3);
-  const [newGroupCreator, setNewGroupCreator] = useState('Mahesh Patil');
+  const [newGroupCreator, setNewGroupCreator] = useState(user.name || 'Student');
 
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
 
@@ -49,8 +50,8 @@ export default function StudyGroupsPage() {
     if (!inviteCodeInput.trim()) return;
 
     const result = joinStudyGroup(inviteCodeInput.trim(), {
-      name: 'Mahesh Patil',
-      email: 'mahesh@college.edu',
+      name: user.name || 'Student',
+      email: user.email || 'student@college.edu',
     });
 
     setJoinStatus(result);
@@ -72,13 +73,14 @@ export default function StudyGroupsPage() {
       description: newGroupDesc.trim() || 'Private study circle for semester exam preparation.',
       departmentCode: newGroupDept,
       semesterNumber: newGroupSem,
-      createdByName: newGroupCreator.trim() || 'Mahesh Patil',
+      createdByName: newGroupCreator.trim() || user.name || 'Student',
     });
 
     setIsCreateOpen(false);
     setNewGroupName('');
     setNewGroupDesc('');
   };
+
 
   return (
     <div className="min-h-screen flex flex-col bg-[#f8fafc] text-slate-900">
