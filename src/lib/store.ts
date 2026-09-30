@@ -49,9 +49,11 @@ const STORAGE_KEYS = {
 
 export const SUPERADMIN_EMAILS = [
   'mahipatil13@gmail.com',
-  'mahesh@college.edu',
   'maheshpatil13@gmail.com',
+  'mahiiipatil13@gmail.com',
+  'mahesh@college.edu',
 ];
+
 
 export function isSuperadminEmail(email?: string): boolean {
   if (!email) return false;
