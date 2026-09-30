@@ -40,8 +40,13 @@ export default function LoginPage() {
         loginUser(email);
       }
       
-      router.push('/dashboard');
+      if (typeof window !== 'undefined') {
+        window.location.href = '/dashboard';
+      } else {
+        router.push('/dashboard');
+      }
     } catch (err: unknown) {
+
       const message = err instanceof Error ? err.message : 'Failed to sign in';
       setErrorMsg(message);
     } finally {
