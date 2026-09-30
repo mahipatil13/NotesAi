@@ -135,8 +135,9 @@ export const INITIAL_NOTES: LibraryNote[] = [
     semesterNumber: 2,
     title: 'Unit 3 — PN Junction Diode & V-I Characteristics',
     description: 'Comprehensive college notes covering depletion region formation, barrier potential, biasing, and rectification applications.',
-    uploaderName: 'Mahesh Patil',
+    uploaderName: 'ECE Department',
     pages: 28,
+
     fileSize: '2.4 MB',
     status: 'APPROVED',
     downloads: 1420,
@@ -477,10 +478,10 @@ export const INITIAL_STUDY_GROUPS: import('./types').StudyGroup[] = [
     semesterNumber: 3,
     inviteCode: 'CS301X',
     isPrivate: true,
-    createdByName: 'Mahesh Patil',
+    createdByName: 'Rahul Verma',
     createdAt: '2026-09-15',
     members: [
-      { id: 'm-1', name: 'Mahesh Patil', email: 'mahesh@college.edu', role: 'Admin', joinedAt: 'Sep 15, 2026', avatarColor: 'bg-indigo-600' },
+      { id: 'm-1', name: 'Rahul Verma', email: 'rahul@college.edu', role: 'Admin', joinedAt: 'Sep 15, 2026', avatarColor: 'bg-indigo-600' },
       { id: 'm-2', name: 'Priya Sharma', email: 'priya@college.edu', role: 'Member', joinedAt: 'Sep 16, 2026', avatarColor: 'bg-emerald-600' },
       { id: 'm-3', name: 'Aryan Nair', email: 'aryan@college.edu', role: 'Member', joinedAt: 'Sep 18, 2026', avatarColor: 'bg-amber-600' },
       { id: 'm-4', name: 'Rohit Joshi', email: 'rohit@college.edu', role: 'Member', joinedAt: 'Sep 21, 2026', avatarColor: 'bg-purple-600' },
@@ -492,7 +493,7 @@ export const INITIAL_STUDY_GROUPS: import('./types').StudyGroup[] = [
     discussion: [
       {
         id: 'msg-1',
-        senderName: 'Mahesh Patil',
+        senderName: 'Rahul Verma',
         senderId: 'm-1',
         role: 'Admin',
         text: 'Welcome to our private group! Uploaded the AVL rotation derivations and Banker’s algorithm summary in the shared files tab.',
@@ -528,7 +529,7 @@ export const INITIAL_STUDY_GROUPS: import('./types').StudyGroup[] = [
     createdAt: '2026-09-18',
     members: [
       { id: 'm-10', name: 'Ananya Rao', email: 'ananya@college.edu', role: 'Admin', joinedAt: 'Sep 18, 2026', avatarColor: 'bg-rose-600' },
-      { id: 'm-1', name: 'Mahesh Patil', email: 'mahesh@college.edu', role: 'Member', joinedAt: 'Sep 19, 2026', avatarColor: 'bg-indigo-600' },
+      { id: 'm-1', name: 'Kavya Sen', email: 'kavya@college.edu', role: 'Member', joinedAt: 'Sep 19, 2026', avatarColor: 'bg-indigo-600' },
       { id: 'm-11', name: 'Vikram Singh', email: 'vikram@college.edu', role: 'Member', joinedAt: 'Sep 20, 2026', avatarColor: 'bg-sky-600' },
     ],
     sharedNotes: [
@@ -545,7 +546,7 @@ export const INITIAL_STUDY_GROUPS: import('./types').StudyGroup[] = [
       },
       {
         id: 'msg-11',
-        senderName: 'Mahesh Patil',
+        senderName: 'Kavya Sen',
         senderId: 'm-1',
         role: 'Member',
         text: 'Just uploaded the diode clipping & clamping circuit diagrams with page citations from Boylestad.',
@@ -553,4 +554,5 @@ export const INITIAL_STUDY_GROUPS: import('./types').StudyGroup[] = [
       },
     ],
   },
+
 ];

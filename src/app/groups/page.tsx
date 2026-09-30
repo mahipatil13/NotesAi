@@ -138,7 +138,8 @@ export default function StudyGroupsPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {studyGroups.map((group) => {
-              const isAdmin = group.members.some(m => m.name === 'Mahesh Patil' && m.role === 'Admin');
+              const isAdmin = user.isLoggedIn && group.members.some(m => (m.name === user.name || (user.email && m.email === user.email)) && m.role === 'Admin');
+
 
               return (
                 <Link

@@ -75,17 +75,26 @@ export default function SuperadminPage() {
             <span className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-rose-100 text-rose-700 mb-2">
               Access Restricted
             </span>
-            <h1 className="text-xl font-bold text-slate-900 mb-2">Superadmin Only</h1>
+            <h1 className="text-xl font-bold text-slate-900 mb-2">Superadmin Access Required</h1>
             <p className="text-xs text-slate-600 leading-relaxed mb-6">
-              This console is strictly restricted to Mahesh Patil (Superadmin). Your current account ({user.name || 'Guest'} &bull; {user.role || 'Visitor'}) does not have permission to view or approve materials.
+              This console is restricted to Superadmin accounts. Your current session ({user.isLoggedIn ? user.name : 'Not Signed In'} &bull; {user.isLoggedIn ? user.role : 'Visitor'}) does not have moderation permissions.
             </p>
             <div className="flex flex-col gap-2">
-              <button
-                onClick={() => router.push('/dashboard')}
-                className="w-full py-2.5 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold shadow-xs transition-colors"
-              >
-                Return to Dashboard
-              </button>
+              {!user.isLoggedIn ? (
+                <button
+                  onClick={() => router.push('/login')}
+                  className="w-full py-2.5 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold shadow-xs transition-colors"
+                >
+                  Sign In to Superadmin Account
+                </button>
+              ) : (
+                <button
+                  onClick={() => router.push('/dashboard')}
+                  className="w-full py-2.5 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold shadow-xs transition-colors"
+                >
+                  Return to Dashboard
+                </button>
+              )}
               <p className="text-[11px] text-slate-400">Redirecting automatically...</p>
             </div>
           </div>
@@ -94,6 +103,7 @@ export default function SuperadminPage() {
       </div>
     );
   }
+
 
   // Collect all notes including private study group notes
   const allGroupNotes = studyGroups.flatMap((g) => 

@@ -134,8 +134,8 @@ const DEFAULT_PERSONAL_DOCS: PersonalDocument[] = [
     pages: 28,
     status: 'COMPLETED',
     uploadedAt: 'Yesterday',
-    uploaderId: 'usr-mahesh',
-    uploaderName: 'Mahesh Patil',
+    uploaderId: 'usr-student',
+    uploaderName: 'Student',
     examPack: INITIAL_NOTES[0].examPack,
   },
   {
@@ -146,8 +146,8 @@ const DEFAULT_PERSONAL_DOCS: PersonalDocument[] = [
     pages: 36,
     status: 'COMPLETED',
     uploadedAt: '3 days ago',
-    uploaderId: 'usr-mahesh',
-    uploaderName: 'Mahesh Patil',
+    uploaderId: 'usr-student',
+    uploaderName: 'Student',
     examPack: INITIAL_NOTES[1].examPack,
   },
 ];
@@ -156,10 +156,11 @@ const DEFAULT_CHAT_MESSAGES: ChatMessage[] = [
   {
     id: 'chat-1',
     role: 'assistant',
-    content: 'Hello Mahesh! I am your Smart Study AI assistant. I have indexed your notes from **Unit 3 — PN Junction Diodes** and **Data Structures**. Ask me anything, or toggle the "Teach Me" mode to adjust explanation depth!',
+    content: 'Hello! I am your Smart Study AI assistant. I have indexed your notes from **Unit 3 — PN Junction Diodes** and **Data Structures**. Ask me anything, or toggle the "Teach Me" mode to adjust explanation depth!',
     timestamp: 'Just now',
   },
 ];
+
 
 export function useSmartStudyStore() {
   const [user, setUser] = useState<User>(DEFAULT_USER);

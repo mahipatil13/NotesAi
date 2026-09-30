@@ -70,17 +70,11 @@ export default function LoginPage() {
 
         <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-xs">
           {errorMsg && (
-            <div className="mb-4 p-2.5 rounded-lg bg-red-50 border border-red-200 text-red-700 text-xs flex flex-col gap-1">
-              <span>{errorMsg}</span>
-              <button
-                type="button"
-                onClick={() => router.push('/dashboard')}
-                className="text-left text-[11px] text-red-600 font-semibold underline hover:text-red-800"
-              >
-                Or continue in guest demo mode &rarr;
-              </button>
+            <div className="mb-4 p-2.5 rounded-lg bg-red-50 border border-red-200 text-red-700 text-xs">
+              {errorMsg}
             </div>
           )}
+
           <form onSubmit={handleLogin} className="space-y-4 text-xs">
             <div>
               <label className="block text-slate-700 font-medium mb-1">Email address</label>
