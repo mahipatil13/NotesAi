@@ -3,7 +3,9 @@
 import React, { useState, useRef } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import AuthGuard from '@/components/AuthGuard';
 import { useSmartStudyStore } from '@/lib/store';
+
 import { PersonalDocument } from '@/lib/types';
 import Link from 'next/link';
 import { 
@@ -233,7 +235,9 @@ export default function DashboardPage() {
   const todayDayIndex = (new Date().getDay() + 6) % 7; // 0 = Mon, 6 = Sun
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#f8fafc] text-slate-900">
+    <AuthGuard>
+      <div className="min-h-screen flex flex-col bg-[#f8fafc] text-slate-900">
+
       <Navbar />
 
       <main className="flex-1 max-w-6xl mx-auto px-4 sm:px-6 py-8 w-full space-y-6">
@@ -908,5 +912,7 @@ export default function DashboardPage() {
 
       <Footer />
     </div>
+    </AuthGuard>
   );
+
 }

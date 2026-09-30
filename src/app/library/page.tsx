@@ -3,7 +3,9 @@
 import React, { useState, useMemo, useRef } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import AuthGuard from '@/components/AuthGuard';
 import { useSmartStudyStore } from '@/lib/store';
+
 import { LibraryNote } from '@/lib/types';
 import { storePdfBlob } from '@/lib/pdfStorage';
 import Link from 'next/link';
@@ -349,7 +351,9 @@ export default function LibraryPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#f8fafc] text-slate-900">
+    <AuthGuard>
+      <div className="min-h-screen flex flex-col bg-[#f8fafc] text-slate-900">
+
       <Navbar />
 
       <main className="flex-1 max-w-6xl mx-auto px-4 sm:px-6 py-8 w-full">
@@ -1325,5 +1329,7 @@ export default function LibraryPage() {
 
       <Footer />
     </div>
+    </AuthGuard>
   );
+
 }

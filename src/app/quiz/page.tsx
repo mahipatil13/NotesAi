@@ -289,10 +289,14 @@ function QuizContent() {
   );
 }
 
+import AuthGuard from '@/components/AuthGuard';
+
 export default function QuizPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-[#f8fafc] text-slate-500 flex items-center justify-center text-xs">Loading Quiz...</div>}>
-      <QuizContent />
-    </Suspense>
+    <AuthGuard>
+      <Suspense fallback={<div className="min-h-screen bg-[#f8fafc] text-slate-500 flex items-center justify-center text-xs">Loading Quiz...</div>}>
+        <QuizContent />
+      </Suspense>
+    </AuthGuard>
   );
 }

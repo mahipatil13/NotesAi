@@ -271,10 +271,14 @@ Applying opposite polarity pulls majority carriers away, widening the depletion 
   );
 }
 
+import AuthGuard from '@/components/AuthGuard';
+
 export default function ChatPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-[#f8fafc] text-slate-500 flex items-center justify-center text-xs">Loading AI Tutor...</div>}>
-      <ChatContent />
-    </Suspense>
+    <AuthGuard>
+      <Suspense fallback={<div className="min-h-screen bg-[#f8fafc] text-slate-500 flex items-center justify-center text-xs">Loading AI Tutor...</div>}>
+        <ChatContent />
+      </Suspense>
+    </AuthGuard>
   );
 }
