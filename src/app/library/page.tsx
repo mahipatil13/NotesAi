@@ -252,11 +252,8 @@ export default function LibraryPage() {
 
     try {
       if (stagedFile) {
-        // If PDF, store in IndexedDB
-        if (stagedFile.type === 'application/pdf' || stagedFile.name.toLowerCase().endsWith('.pdf')) {
-          setProcessingStatus('Saving document into local storage repository...');
-          await storePdfBlob(assignedNoteId, stagedFile);
-        }
+        setProcessingStatus('Saving original document into storage repository...');
+        await storePdfBlob(assignedNoteId, stagedFile);
 
         setProcessingStatus('Extracting concepts & generating AI exam pack...');
         const formData = new FormData();
@@ -327,12 +324,13 @@ export default function LibraryPage() {
         uploaderId: user.id || `usr-${Date.now()}`,
         uploaderEmail: user.email || '',
         pages: finalPages,
-
         fileSize: fileSizeStr,
+        fileUrl: `/api/documents/${assignedNoteId}`,
         status: 'PENDING', // Public notes require Superadmin approval to push to server
         tags: ['Contributed', uploadDept.toUpperCase(), `Sem ${uploadSemester}`, 'Exam Pack'],
         examPack: generatedExamPack || fallbackExamPack
       });
+
 
       setIsProcessingUpload(false);
       setUploadSuccessMessage(true);

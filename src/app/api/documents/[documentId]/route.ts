@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
+import os from 'os';
 
 export async function GET(
   request: NextRequest,
@@ -15,7 +16,11 @@ export async function GET(
       return NextResponse.json({ error: 'Invalid document ID' }, { status: 400 });
     }
 
-    const uploadsDir = path.join(process.cwd(), 'uploads');
+    const searchDirs = [
+      path.join(process.cwd(), 'uploads'),
+      path.join(os.tmpdir(), 'uploads'),
+    ];
+
     
     // Look for matching files with common extensions
     const candidates = [
@@ -27,19 +32,24 @@ export async function GET(
     ];
 
     let foundFile: string | null = null;
-    for (const cand of candidates) {
-      const p = path.join(uploadsDir, cand);
-      if (fs.existsSync(p)) {
-        foundFile = p;
-        break;
+    for (const dir of searchDirs) {
+      if (!fs.existsSync(/*turbopackIgnore: true*/ dir)) continue;
+      for (const cand of candidates) {
+        const p = path.join(/*turbopackIgnore: true*/ dir, cand);
+        if (fs.existsSync(/*turbopackIgnore: true*/ p)) {
+          foundFile = p;
+          break;
+        }
       }
+      if (foundFile) break;
     }
 
     if (!foundFile) {
       return NextResponse.json({ error: 'Document file not found' }, { status: 404 });
     }
 
-    const fileBuffer = await fs.promises.readFile(foundFile);
+    const fileBuffer = await fs.promises.readFile(/*turbopackIgnore: true*/ foundFile);
+
     const ext = path.extname(foundFile).toLowerCase();
 
     let contentType = 'application/pdf';

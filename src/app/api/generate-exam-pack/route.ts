@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import fs from 'fs';
 import path from 'path';
+import os from 'os';
+
 
 async function extractPdfText(buffer: Buffer): Promise<{ text: string; pages: number }> {
   try {
@@ -148,9 +150,15 @@ export async function POST(req: NextRequest) {
     let originalFileName = '';
 
     const uploadsDir = path.join(process.cwd(), 'uploads');
-    if (!fs.existsSync(uploadsDir)) {
-      fs.mkdirSync(uploadsDir, { recursive: true });
-    }
+
+    const tmpUploadsDir = path.join(os.tmpdir(), 'uploads');
+    
+    try {
+      if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
+    } catch {}
+    try {
+      if (!fs.existsSync(tmpUploadsDir)) fs.mkdirSync(tmpUploadsDir, { recursive: true });
+    } catch {}
 
     // Handle multipart PDF upload
     if (contentType.includes('multipart/form-data')) {
@@ -168,26 +176,30 @@ export async function POST(req: NextRequest) {
         fileBuffer = Buffer.from(arrayBuffer);
 
         const isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
-        
-        if (isPdf) {
-          // Save PDF to uploads dir
-          const filePath = path.join(uploadsDir, `${documentId}.pdf`);
-          await fs.promises.writeFile(filePath, fileBuffer);
+        const ext = isPdf ? '.pdf' : (path.extname(file.name) || '.txt');
+        const fileName = `${documentId}${ext}`;
 
+        // Save file to both local uploads and tmp dir for serverless access
+        try {
+          await fs.promises.writeFile(path.join(uploadsDir, fileName), fileBuffer);
+        } catch {}
+        try {
+          await fs.promises.writeFile(path.join(tmpUploadsDir, fileName), fileBuffer);
+        } catch {}
+
+        if (isPdf) {
           // Extract text and page count using PDFParse
           const parseResult = await extractPdfText(fileBuffer);
           extractedText = parseResult.text;
           pages = parseResult.pages;
         } else {
           // Plain text / Markdown or other document
-          const ext = path.extname(file.name) || '.txt';
-          const filePath = path.join(uploadsDir, `${documentId}${ext}`);
-          await fs.promises.writeFile(filePath, fileBuffer);
           extractedText = fileBuffer.toString('utf-8');
           pages = Math.max(1, Math.ceil(extractedText.length / 2500));
         }
       }
     } else {
+
       // Handle JSON body
       const body = await req.json();
       title = body.title || title;
