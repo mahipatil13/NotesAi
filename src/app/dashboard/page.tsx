@@ -268,19 +268,12 @@ export default function DashboardPage() {
           </div>
 
           <div className="flex items-center gap-2.5 shrink-0">
-            <button
-              onClick={() => setIsUploadModalOpen(true)}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shadow-xs transition-all hover:scale-[1.02]"
-            >
-              <Upload className="w-4 h-4" />
-              <span>Upload Notes</span>
-            </button>
             <Link
               href="/library"
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 text-xs font-medium transition-colors"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shadow-xs transition-colors"
             >
-              <BookOpen className="w-4 h-4 text-slate-400" />
-              <span>Library</span>
+              <BookOpen className="w-4 h-4" />
+              <span>Browse Library</span>
             </Link>
             <Link
               href="/groups"
@@ -290,6 +283,7 @@ export default function DashboardPage() {
               <span>Study Groups</span>
             </Link>
           </div>
+
         </div>
 
         {/* Stats Row */}
@@ -573,16 +567,14 @@ export default function DashboardPage() {
 
                   <div className="text-[11px] text-slate-400 mt-4 pt-2 border-t border-slate-100 flex items-center justify-between">
                     <span>{count} notes</span>
-                    <button
-                      onClick={() => {
-                        setSelectedSubjectId(sub.id);
-                        setIsUploadModalOpen(true);
-                      }}
+                    <Link
+                      href="/library"
                       className="text-indigo-600 font-semibold hover:underline"
                     >
-                      + Add Note
-                    </button>
+                      Browse Library &rarr;
+                    </Link>
                   </div>
+
                 </div>
               );
             })}

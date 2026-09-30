@@ -436,6 +436,17 @@ export default function SuperadminPage() {
 
                     {/* Superadmin Actions */}
                     <div className="flex flex-wrap items-center gap-2 shrink-0 pt-2 md:pt-0">
+                      <Link
+                        href={`/notes/${note.id}`}
+                        target="_blank"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 text-xs font-semibold transition-colors"
+                        title="View & inspect original uploaded document"
+                      >
+                        <FileText className="w-3.5 h-3.5 text-indigo-600" />
+                        <span>View Original File</span>
+                        <ExternalLink className="w-3 h-3 text-indigo-400" />
+                      </Link>
+
                       <button
                         onClick={() => setSelectedNote(note)}
                         className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition-colors"
@@ -443,6 +454,7 @@ export default function SuperadminPage() {
                         <Eye className="w-3.5 h-3.5 text-slate-500" />
                         <span>Inspect & Preview</span>
                       </button>
+
 
                       {isPending && (
                         <>
@@ -516,10 +528,32 @@ export default function SuperadminPage() {
             </div>
 
             <div className="flex-1 p-5 overflow-y-auto space-y-4 text-xs sm:text-sm">
+              {/* Original Document Verification Banner */}
+              <div className="p-3.5 rounded-xl bg-indigo-50 border border-indigo-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center shrink-0">
+                    <FileText className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <div className="font-bold text-xs text-slate-900">Original Uploaded File Verification</div>
+                    <div className="text-[11px] text-slate-500">Inspect the full original PDF or text file before approving</div>
+                  </div>
+                </div>
+                <Link
+                  href={`/notes/${selectedNote.id}`}
+                  target="_blank"
+                  className="inline-flex items-center justify-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold transition-colors shadow-2xs shrink-0"
+                >
+                  <span>Open Full Original PDF</span>
+                  <ExternalLink className="w-3 h-3" />
+                </Link>
+              </div>
+
               <div className="p-4 rounded-xl bg-slate-50 border border-slate-200">
                 <h4 className="font-bold text-xs uppercase tracking-wide text-slate-700 mb-1">Document Description</h4>
                 <p className="text-slate-600">{selectedNote.description || 'No description provided.'}</p>
               </div>
+
 
               {selectedNote.examPack?.summary && (
                 <div className="p-4 rounded-xl bg-indigo-50/50 border border-indigo-200">
