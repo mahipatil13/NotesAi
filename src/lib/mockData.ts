@@ -8,7 +8,7 @@ export const INITIAL_DEPARTMENTS: Department[] = [
     description: 'Algorithms, Data Structures, Operating Systems, Networks, and AI.',
     icon: 'Cpu',
     color: 'from-blue-600 to-indigo-600',
-    totalNotes: 48,
+    totalNotes: 2,
   },
   {
     id: 'ece',
@@ -17,7 +17,7 @@ export const INITIAL_DEPARTMENTS: Department[] = [
     description: 'Semiconductors, Signal Processing, Microcontrollers, and VLSI.',
     icon: 'Radio',
     color: 'from-purple-600 to-pink-600',
-    totalNotes: 34,
+    totalNotes: 1,
   },
   {
     id: 'mech',
@@ -26,7 +26,7 @@ export const INITIAL_DEPARTMENTS: Department[] = [
     description: 'Thermodynamics, Fluid Dynamics, Mechanics of Materials, and CAD.',
     icon: 'Cog',
     color: 'from-amber-600 to-orange-600',
-    totalNotes: 29,
+    totalNotes: 1,
   },
   {
     id: 'civil',
@@ -35,7 +35,7 @@ export const INITIAL_DEPARTMENTS: Department[] = [
     description: 'Structural Analysis, Concrete Technology, Geotechnical Engineering.',
     icon: 'HardHat',
     color: 'from-emerald-600 to-teal-600',
-    totalNotes: 21,
+    totalNotes: 0,
   },
   {
     id: 'it',
@@ -44,7 +44,7 @@ export const INITIAL_DEPARTMENTS: Department[] = [
     description: 'Cloud Computing, Cybersecurity, Web Architectures, and Database Systems.',
     icon: 'Server',
     color: 'from-cyan-600 to-blue-600',
-    totalNotes: 37,
+    totalNotes: 0,
   },
 ];
 

@@ -8,14 +8,22 @@ import AuthGuard from '@/components/AuthGuard';
 import { 
   Sparkles, 
   BookOpen, 
-  Upload, 
+  LayoutDashboard, 
   FileText, 
   ArrowRight, 
   Award
 } from 'lucide-react';
-import { INITIAL_DEPARTMENTS } from '@/lib/mockData';
+import { useSmartStudyStore } from '@/lib/store';
 
 export default function HomePage() {
+  const { user, departments, notes } = useSmartStudyStore();
+
+  const getDeptNoteCount = (deptId: string) => {
+    return notes.filter(
+      (n) => n.departmentId.toLowerCase() === deptId.toLowerCase() && n.status === 'APPROVED'
+    ).length;
+  };
+
   return (
     <AuthGuard>
       <div className="min-h-screen flex flex-col bg-[#f8fafc] text-slate-900">
@@ -28,14 +36,18 @@ export default function HomePage() {
             {/* Subtle Pill */}
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-slate-700 text-xs font-medium mb-6">
               <Sparkles className="w-3.5 h-3.5 text-indigo-600" />
-              <span>AI Exam Preparation for College Students</span>
+              <span>
+                {user.name && user.name !== 'Student' && user.name !== 'Guest User'
+                  ? `Welcome, ${user.name.split(' ')[0]} • Academic Workspace`
+                  : 'AI Exam Preparation for College Students'}
+              </span>
             </div>
 
             {/* Heading */}
             <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-slate-900 leading-[1.15] mb-5">
-              Upload your notes.{' '}
+              Master your syllabus.{' '}
               <span className="text-indigo-600">
-                Turn them into an exam-ready study pack.
+                Turn lecture notes into exam-ready study packs.
               </span>
             </h1>
 
@@ -44,14 +56,14 @@ export default function HomePage() {
               Instantly convert lecture PDFs into concise unit summaries, <strong>1, 2, and 10-mark university exam questions</strong>, and key formulas—all cited with source page numbers.
             </p>
 
-            {/* Clean CTA Buttons */}
+            {/* Clean CTA Buttons - Upload Section removed after login; streamlined navigation */}
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3 max-w-sm mx-auto mb-14">
               <Link
                 href="/dashboard"
                 className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-sm shadow-sm transition-all"
               >
-                <Upload className="w-4 h-4" />
-                <span>Upload Notes</span>
+                <LayoutDashboard className="w-4 h-4" />
+                <span>Go to Dashboard</span>
               </Link>
               <Link
                 href="/library"
@@ -132,26 +144,31 @@ export default function HomePage() {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5">
-              {INITIAL_DEPARTMENTS.map((dept) => (
-                <Link
-                  key={dept.id}
-                  href={`/library?dept=${dept.id}`}
-                  className="p-4 rounded-xl border border-slate-200 hover:border-slate-300 hover:bg-slate-50/60 transition-all bg-white shadow-xs"
-                >
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="font-mono text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded">
-                      {dept.code}
-                    </span>
-                    <span className="text-[11px] text-slate-400">{dept.totalNotes} notes</span>
-                  </div>
-                  <h3 className="font-semibold text-sm text-slate-900 mb-1">
-                    {dept.name}
-                  </h3>
-                  <p className="text-xs text-slate-500 line-clamp-2">
-                    {dept.description}
-                  </p>
-                </Link>
-              ))}
+              {departments.map((dept) => {
+                const count = getDeptNoteCount(dept.id);
+                return (
+                  <Link
+                    key={dept.id}
+                    href={`/library?dept=${dept.id}`}
+                    className="p-4 rounded-xl border border-slate-200 hover:border-slate-300 hover:bg-slate-50/60 transition-all bg-white shadow-xs"
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="font-mono text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded">
+                        {dept.code}
+                      </span>
+                      <span className="text-[11px] text-slate-500 font-medium">
+                        {count === 1 ? '1 note' : `${count} notes`}
+                      </span>
+                    </div>
+                    <h3 className="font-semibold text-sm text-slate-900 mb-1">
+                      {dept.name}
+                    </h3>
+                    <p className="text-xs text-slate-500 line-clamp-2">
+                      {dept.description}
+                    </p>
+                  </Link>
+                );
+              })}
             </div>
           </div>
         </section>

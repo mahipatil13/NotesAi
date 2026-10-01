@@ -40,7 +40,10 @@ export default function GroupWorkspacePage({
     ? { name: user.name, email: user.email }
     : { name: 'Guest User', email: 'guest@college.edu' };
   const isMember = group?.members.some(
-    (m) => m.name === currentUser.name || (currentUser.email && m.email === currentUser.email)
+    (m) =>
+      (user.id && m.id && m.id === user.id) ||
+      (currentUser.email && m.email && m.email.toLowerCase() === currentUser.email.toLowerCase()) ||
+      (currentUser.name && m.name && m.name.toLowerCase() === currentUser.name.toLowerCase() && currentUser.name.toLowerCase() !== 'guest user' && currentUser.name.toLowerCase() !== 'student')
   );
 
 
@@ -146,14 +149,14 @@ export default function GroupWorkspacePage({
               </div>
 
               <span className="text-[11px] font-semibold px-2 py-0.5 rounded bg-indigo-50 text-indigo-700 border border-indigo-100">
-                Private Group
+                Private Group Gate
               </span>
 
               <h2 className="text-xl font-bold text-slate-900 mt-2 mb-1">
-                {group.name}
+                Enter Invite Code
               </h2>
               <p className="text-xs text-slate-500 mb-6 leading-relaxed">
-                This study group is private. Only invited members can view the shared notes, exam packs, and discussion messages.
+                This study group is private and invite-only. Enter the 6-character access code provided by your group admin to view the workspace.
               </p>
 
               {unlockError && (

@@ -230,9 +230,29 @@ export default function DashboardPage() {
 
   const completedTodosCount = todos.filter((t) => t.completed).length;
 
-  // Days of week for streak visualizer
-  const weekDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-  const todayDayIndex = (new Date().getDay() + 6) % 7; // 0 = Mon, 6 = Sun
+  // Days of current week for accurate streak visualizer
+  const currentWeekDates = React.useMemo(() => {
+    const now = new Date();
+    const currentDay = (now.getDay() + 6) % 7; // 0 = Mon, 6 = Sun
+    const monday = new Date(now);
+    monday.setDate(now.getDate() - currentDay);
+
+    return ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((dayName, idx) => {
+      const d = new Date(monday);
+      d.setDate(monday.getDate() + idx);
+      const iso = d.toISOString().split('T')[0];
+      const isToday = idx === currentDay;
+      const isPast = idx < currentDay;
+      const isChecked = streak.history?.includes(iso);
+      return {
+        dayName,
+        iso,
+        isToday,
+        isPast,
+        isChecked,
+      };
+    });
+  }, [streak.history]);
 
   return (
     <AuthGuard>
@@ -361,22 +381,28 @@ export default function DashboardPage() {
               <div className="space-y-1.5 mb-4">
                 <span className="text-[11px] font-semibold text-slate-600 block">Weekly Progress</span>
                 <div className="grid grid-cols-7 gap-1.5 text-center">
-                  {weekDays.map((day, idx) => {
-                    const isPastOrToday = idx <= todayDayIndex;
-                    const isActive = isPastOrToday && streak.currentStreak > 0;
+                  {currentWeekDates.map((day) => {
+                    const isActive = day.isChecked;
                     return (
                       <div 
-                        key={day}
+                        key={day.dayName}
+                        title={day.iso}
                         className={`p-1.5 rounded-lg border text-xs transition-all ${
                           isActive
                             ? 'bg-amber-50 border-amber-300 text-amber-900 font-bold'
+                            : day.isToday
+                            ? 'bg-indigo-50/60 border-indigo-200 text-indigo-900'
                             : 'bg-slate-50 border-slate-100 text-slate-400'
                         }`}
                       >
-                        <div className="text-[10px] uppercase font-semibold">{day}</div>
+                        <div className={`text-[10px] uppercase font-semibold ${day.isToday && !isActive ? 'text-indigo-600 font-bold' : ''}`}>
+                          {day.dayName}
+                        </div>
                         <div className="mt-1 flex items-center justify-center">
                           {isActive ? (
                             <Check className="w-3 h-3 text-amber-600 stroke-[3]" />
+                          ) : day.isToday ? (
+                            <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse"></span>
                           ) : (
                             <span className="w-1.5 h-1.5 rounded-full bg-slate-200"></span>
                           )}

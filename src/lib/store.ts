@@ -99,11 +99,28 @@ const DEFAULT_TODOS: TodoItem[] = [
   },
 ];
 
+export function getTodayIso(): string {
+  return new Date().toISOString().split('T')[0];
+}
+
+export function getYesterdayIso(): string {
+  const d = new Date();
+  d.setDate(d.getDate() - 1);
+  return d.toISOString().split('T')[0];
+}
+
+export function getStreakStorageKey(userEmail?: string): string {
+  if (userEmail && userEmail.trim() !== '') {
+    return `${STORAGE_KEYS.STREAK}_${userEmail.trim().toLowerCase()}`;
+  }
+  return STORAGE_KEYS.STREAK;
+}
+
 const DEFAULT_STREAK: UserStreak = {
-  currentStreak: 5,
-  longestStreak: 12,
-  lastActiveDate: '2026-09-30',
-  history: ['2026-09-26', '2026-09-27', '2026-09-28', '2026-09-29', '2026-09-30'],
+  currentStreak: 0,
+  longestStreak: 0,
+  lastActiveDate: '',
+  history: [],
 };
 
 const DEFAULT_PERSONAL_SUBJECTS: PersonalSubject[] = [
@@ -183,13 +200,34 @@ export function useSmartStudyStore() {
     if (typeof window === 'undefined') return;
     try {
       const storedUser = localStorage.getItem(STORAGE_KEYS.USER);
-      if (storedUser) setUser(JSON.parse(storedUser));
+      let currentUserEmail = '';
+      if (storedUser) {
+        const parsedUser = JSON.parse(storedUser);
+        setUser(parsedUser);
+        currentUserEmail = parsedUser.email || '';
+      }
 
       const storedTodos = localStorage.getItem(STORAGE_KEYS.TODOS);
       if (storedTodos) setTodos(JSON.parse(storedTodos));
 
-      const storedStreak = localStorage.getItem(STORAGE_KEYS.STREAK);
-      if (storedStreak) setStreak(JSON.parse(storedStreak));
+      const streakKey = getStreakStorageKey(currentUserEmail);
+      const storedStreak = localStorage.getItem(streakKey) || localStorage.getItem(STORAGE_KEYS.STREAK);
+      if (storedStreak) {
+        try {
+          const parsed = JSON.parse(storedStreak);
+          const today = getTodayIso();
+          const yesterday = getYesterdayIso();
+          const isValid = parsed.lastActiveDate === today || parsed.lastActiveDate === yesterday;
+          setStreak({
+            ...parsed,
+            currentStreak: isValid ? (parsed.currentStreak || 0) : 0,
+          });
+        } catch {
+          setStreak(DEFAULT_STREAK);
+        }
+      } else {
+        setStreak(DEFAULT_STREAK);
+      }
 
       const storedDepts = localStorage.getItem(STORAGE_KEYS.DEPARTMENTS);
       if (storedDepts) setDepartments(JSON.parse(storedDepts));
@@ -233,7 +271,11 @@ export function useSmartStudyStore() {
 
   const saveStreak = (updated: UserStreak) => {
     setStreak(updated);
-    if (typeof window !== 'undefined') localStorage.setItem(STORAGE_KEYS.STREAK, JSON.stringify(updated));
+    if (typeof window !== 'undefined') {
+      const key = getStreakStorageKey(user.email);
+      localStorage.setItem(key, JSON.stringify(updated));
+      localStorage.setItem(STORAGE_KEYS.STREAK, JSON.stringify(updated));
+    }
   };
 
   const saveDepartments = (updated: Department[]) => {
@@ -379,6 +421,28 @@ export function useSmartStudyStore() {
       isLoggedIn: true,
     };
     saveUser(updated);
+
+    if (typeof window !== 'undefined') {
+      const userStreakKey = getStreakStorageKey(email);
+      const stored = localStorage.getItem(userStreakKey);
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored);
+          const today = getTodayIso();
+          const yesterday = getYesterdayIso();
+          const isValid = parsed.lastActiveDate === today || parsed.lastActiveDate === yesterday;
+          setStreak({
+            ...parsed,
+            currentStreak: isValid ? (parsed.currentStreak || 0) : 0,
+          });
+        } catch {
+          setStreak(DEFAULT_STREAK);
+        }
+      } else {
+        setStreak(DEFAULT_STREAK);
+      }
+    }
+
     return updated;
   };
 
@@ -398,6 +462,7 @@ export function useSmartStudyStore() {
       isLoggedIn: false,
     };
     saveUser(updated);
+    setStreak(DEFAULT_STREAK);
   };
 
   const switchUserRole = (newRole: 'student' | 'superadmin') => {
@@ -432,17 +497,27 @@ export function useSmartStudyStore() {
 
   // Streak actions
   const checkInStreak = () => {
-    const today = new Date().toISOString().split('T')[0];
+    const today = getTodayIso();
+    const yesterday = getYesterdayIso();
+
     if (streak.lastActiveDate === today) {
       return { alreadyChecked: true, streak };
     }
-    const nextStreak = streak.currentStreak + 1;
+
+    let nextStreak = 1;
+    if (streak.lastActiveDate === yesterday) {
+      nextStreak = (streak.currentStreak || 0) + 1;
+    } else {
+      nextStreak = 1;
+    }
+
     const updated: UserStreak = {
       currentStreak: nextStreak,
-      longestStreak: Math.max(nextStreak, streak.longestStreak),
+      longestStreak: Math.max(nextStreak, streak.longestStreak || 0),
       lastActiveDate: today,
-      history: [...streak.history, today],
+      history: streak.history.includes(today) ? streak.history : [...streak.history, today],
     };
+
     saveStreak(updated);
     return { alreadyChecked: false, streak: updated };
   };
@@ -676,7 +751,14 @@ export function useSmartStudyStore() {
     const userName = groupUser?.name || user.name;
     const userEmail = groupUser?.email || user.email;
 
-    if (group.members.some((m) => m.name === userName || m.email === userEmail)) {
+    if (
+      group.members.some(
+        (m) =>
+          (user.id && m.id && m.id === user.id) ||
+          (userEmail && m.email && m.email.toLowerCase() === userEmail.toLowerCase()) ||
+          (userName && m.name && m.name.toLowerCase() === userName.toLowerCase() && userName.toLowerCase() !== 'student' && userName.toLowerCase() !== 'guest user')
+      )
+    ) {
       return { success: true, group, message: 'You are already a member of this study group.' };
     }
 
@@ -685,7 +767,7 @@ export function useSmartStudyStore() {
       members: [
         ...group.members,
         {
-          id: `usr-${Date.now()}`,
+          id: user.id || `usr-${Date.now()}`,
           name: userName,
           email: userEmail,
           role: 'Member',
