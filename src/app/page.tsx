@@ -9,8 +9,7 @@ import {
   Sparkles, 
   BookOpen, 
   LayoutDashboard, 
-  FileText, 
-  ArrowRight, 
+  ArrowRight,
   Award
 } from 'lucide-react';
 import { useSmartStudyStore } from '@/lib/store';
@@ -74,45 +73,37 @@ export default function HomePage() {
               </Link>
             </div>
 
-            {/* Crisp Example Preview */}
-            <div className="border border-slate-200 bg-slate-50 rounded-xl p-4 sm:p-6 text-left shadow-sm">
-              <div className="flex items-center justify-between border-b border-slate-200 pb-3 mb-4 text-xs text-slate-500">
-                <div className="flex items-center gap-2 font-mono text-slate-700 font-semibold">
-                  <FileText className="w-4 h-4 text-indigo-600" />
-                  <span>Unit 3 — PN Junction Diodes.pdf</span>
+
+            {/* How it works – 3 steps */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-left">
+              <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+                <div className="w-8 h-8 rounded-lg bg-indigo-100 flex items-center justify-center mb-3">
+                  <span className="text-indigo-700 font-extrabold text-sm">1</span>
                 </div>
-                <span className="px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200 font-medium text-[11px]">
-                  Exam Pack Generated
-                </span>
+                <h4 className="font-bold text-sm text-slate-900 mb-1">Upload Your PDF Notes</h4>
+                <p className="text-xs text-slate-500 leading-relaxed">
+                  Drop any lecture PDF — handwritten scans, textbook chapters, or typed notes.
+                </p>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="bg-white p-4 rounded-lg border border-slate-200">
-                  <div className="text-xs font-semibold text-indigo-600 mb-1">Summary (Page 1-28)</div>
-                  <h4 className="text-sm font-bold text-slate-900 mb-1">Barrier Potential & Biasing</h4>
-                  <p className="text-xs text-slate-600 leading-relaxed">
-                    Depletion region forms via carrier diffusion, establishing a 0.7V barrier for Silicon. Forward bias narrows this layer.
-                  </p>
+              <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+                <div className="w-8 h-8 rounded-lg bg-indigo-100 flex items-center justify-center mb-3">
+                  <span className="text-indigo-700 font-extrabold text-sm">2</span>
                 </div>
+                <h4 className="font-bold text-sm text-slate-900 mb-1">AI Generates Your Exam Pack</h4>
+                <p className="text-xs text-slate-500 leading-relaxed">
+                  Instantly get 1-mark, 2-mark, and 10-mark questions with page-cited answers and concise summaries.
+                </p>
+              </div>
 
-                <div className="bg-white p-4 rounded-lg border border-slate-200">
-                  <div className="text-xs font-semibold text-slate-700 mb-1">10-Mark Question</div>
-                  <h4 className="text-sm font-bold text-slate-900 mb-1">Explain V-I characteristics</h4>
-                  <p className="text-xs text-slate-600 leading-relaxed">
-                    1. Depletion formation • 2. Forward Shockley exponential equation • 3. Reverse breakdown mechanisms.
-                  </p>
+              <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+                <div className="w-8 h-8 rounded-lg bg-indigo-100 flex items-center justify-center mb-3">
+                  <span className="text-indigo-700 font-extrabold text-sm">3</span>
                 </div>
-
-                <div className="bg-white p-4 rounded-lg border border-slate-200">
-                  <div className="text-xs font-semibold text-indigo-600 mb-1">2-Mark Definition & Formula</div>
-                  <h4 className="text-sm font-bold text-slate-900 mb-1">Dynamic Resistance (rd)</h4>
-                  <p className="text-xs text-slate-700 font-mono bg-slate-50 p-2 rounded border border-slate-200 mb-1">
-                    rd = η · VT / ID = 26mV / ID
-                  </p>
-                  <p className="text-[11px] text-slate-500">
-                    Reciprocal of the slope of the forward V-I characteristic curve.
-                  </p>
-                </div>
+                <h4 className="font-bold text-sm text-slate-900 mb-1">Study Smart, Score Higher</h4>
+                <p className="text-xs text-slate-500 leading-relaxed">
+                  Use flashcards, quiz mode, and AI chat to practice and revise before every exam.
+                </p>
               </div>
             </div>
 

@@ -47,6 +47,12 @@ const STORAGE_KEYS = {
   USAGE: 'smart_study_usage',
 };
 
+/** Returns a user-scoped key so each account has isolated personal data. */
+function userKey(base: string, email: string): string {
+  const safe = email.trim().toLowerCase().replace(/[^a-z0-9]/g, '_');
+  return `${base}__${safe}`;
+}
+
 export const SUPERADMIN_EMAILS = [
   'mahipatil13@gmail.com',
   'maheshpatil13@gmail.com',
@@ -69,35 +75,7 @@ const DEFAULT_USER: User = {
 };
 
 
-const DEFAULT_TODOS: TodoItem[] = [
-  {
-    id: 'todo-1',
-    title: 'Revise PN Junction V-I Characteristics & Barrier Potential',
-    subject: 'Semiconductor Physics',
-    priority: 'High',
-    dueDate: 'Today, 8:00 PM',
-    completed: false,
-    createdAt: '2026-09-30',
-  },
-  {
-    id: 'todo-2',
-    title: 'Practice 10-Mark Stack & Queue Implementation Questions',
-    subject: 'Data Structures',
-    priority: 'High',
-    dueDate: 'Tomorrow',
-    completed: false,
-    createdAt: '2026-09-30',
-  },
-  {
-    id: 'todo-3',
-    title: 'Review Unit 1 Definitions & Formulas for Quiz',
-    subject: 'Semiconductor Physics',
-    priority: 'Medium',
-    dueDate: 'Oct 2',
-    completed: true,
-    createdAt: '2026-09-29',
-  },
-];
+const DEFAULT_TODOS: TodoItem[] = [];
 
 export function getTodayIso(): string {
   return new Date().toISOString().split('T')[0];
@@ -123,59 +101,15 @@ const DEFAULT_STREAK: UserStreak = {
   history: [],
 };
 
-const DEFAULT_PERSONAL_SUBJECTS: PersonalSubject[] = [
-  {
-    id: 'ps-1',
-    name: 'Semiconductor Physics',
-    semester: 2,
-    course: 'B.Tech ECE',
-    description: 'Diodes, Transistors, and biasing circuits',
-    noteCount: 2,
-    createdAt: '2026-09-20',
-  },
-  {
-    id: 'ps-2',
-    name: 'Data Structures',
-    semester: 3,
-    course: 'B.Tech CSE',
-    description: 'Stacks, Queues, Trees, Graphs, Sorting algorithms',
-    noteCount: 1,
-    createdAt: '2026-09-22',
-  },
-];
+const DEFAULT_PERSONAL_SUBJECTS: PersonalSubject[] = [];
 
-const DEFAULT_PERSONAL_DOCS: PersonalDocument[] = [
-  {
-    id: 'pdoc-1',
-    subjectId: 'ps-1',
-    name: 'Unit 3 — PN Junction Diodes.pdf',
-    fileSize: '2.4 MB',
-    pages: 28,
-    status: 'COMPLETED',
-    uploadedAt: 'Yesterday',
-    uploaderId: 'usr-student',
-    uploaderName: 'Student',
-    examPack: INITIAL_NOTES[0].examPack,
-  },
-  {
-    id: 'pdoc-2',
-    subjectId: 'ps-2',
-    name: 'Unit 1 — Stacks and Queues.pdf',
-    fileSize: '3.1 MB',
-    pages: 36,
-    status: 'COMPLETED',
-    uploadedAt: '3 days ago',
-    uploaderId: 'usr-student',
-    uploaderName: 'Student',
-    examPack: INITIAL_NOTES[1].examPack,
-  },
-];
+const DEFAULT_PERSONAL_DOCS: PersonalDocument[] = [];
 
 const DEFAULT_CHAT_MESSAGES: ChatMessage[] = [
   {
     id: 'chat-1',
     role: 'assistant',
-    content: 'Hello! I am your Smart Study AI assistant. I have indexed your notes from **Unit 3 — PN Junction Diodes** and **Data Structures**. Ask me anything, or toggle the "Teach Me" mode to adjust explanation depth!',
+    content: 'Hello! I am your Smart Study AI assistant. Upload a PDF note to get started — I will generate summaries, exam questions, and key formulas from it!',
     timestamp: 'Just now',
   },
 ];
@@ -203,15 +137,20 @@ export function useSmartStudyStore() {
       let currentUserEmail = '';
       if (storedUser) {
         const parsedUser = JSON.parse(storedUser);
-        setUser(parsedUser);
-        currentUserEmail = parsedUser.email || '';
+        // Only restore if actually logged in
+        if (parsedUser.isLoggedIn && parsedUser.email) {
+          setUser(parsedUser);
+          currentUserEmail = parsedUser.email || '';
+          loadUserScopedData(currentUserEmail);
+        } else {
+          setUser(DEFAULT_USER);
+        }
       }
 
-      const storedTodos = localStorage.getItem(STORAGE_KEYS.TODOS);
-      if (storedTodos) setTodos(JSON.parse(storedTodos));
-
       const streakKey = getStreakStorageKey(currentUserEmail);
-      const storedStreak = localStorage.getItem(streakKey) || localStorage.getItem(STORAGE_KEYS.STREAK);
+      const storedStreak = currentUserEmail
+        ? (localStorage.getItem(streakKey) || localStorage.getItem(STORAGE_KEYS.STREAK))
+        : null;
       if (storedStreak) {
         try {
           const parsed = JSON.parse(storedStreak);
@@ -238,25 +177,32 @@ export function useSmartStudyStore() {
       const storedNotes = localStorage.getItem(STORAGE_KEYS.NOTES);
       if (storedNotes) setNotes(JSON.parse(storedNotes));
 
-      const storedPersonalSubjects = localStorage.getItem(STORAGE_KEYS.PERSONAL_SUBJECTS);
-      if (storedPersonalSubjects) setPersonalSubjects(JSON.parse(storedPersonalSubjects));
-
-      const storedPersonalDocs = localStorage.getItem(STORAGE_KEYS.PERSONAL_DOCS);
-      if (storedPersonalDocs) setPersonalDocs(JSON.parse(storedPersonalDocs));
-
-      const storedChat = localStorage.getItem(STORAGE_KEYS.CHAT_MESSAGES);
-      if (storedChat) setChatMessages(JSON.parse(storedChat));
-
       const storedGroups = localStorage.getItem(STORAGE_KEYS.STUDY_GROUPS);
       if (storedGroups) setStudyGroups(JSON.parse(storedGroups));
-
-      const storedUsage = localStorage.getItem(STORAGE_KEYS.USAGE);
-      if (storedUsage) setUsage(JSON.parse(storedUsage));
     } catch (e) {
       console.error('Error loading stored Smart Study state', e);
     }
     setIsLoaded(true);
   }, []);
+
+  /** Load all per-user scoped data (todos, personal subjects/docs, chat, usage) */
+  function loadUserScopedData(email: string) {
+    if (!email || typeof window === 'undefined') return;
+    const storedTodos = localStorage.getItem(userKey(STORAGE_KEYS.TODOS, email));
+    setTodos(storedTodos ? JSON.parse(storedTodos) : DEFAULT_TODOS);
+
+    const storedPS = localStorage.getItem(userKey(STORAGE_KEYS.PERSONAL_SUBJECTS, email));
+    setPersonalSubjects(storedPS ? JSON.parse(storedPS) : DEFAULT_PERSONAL_SUBJECTS);
+
+    const storedPD = localStorage.getItem(userKey(STORAGE_KEYS.PERSONAL_DOCS, email));
+    setPersonalDocs(storedPD ? JSON.parse(storedPD) : DEFAULT_PERSONAL_DOCS);
+
+    const storedChat = localStorage.getItem(userKey(STORAGE_KEYS.CHAT_MESSAGES, email));
+    setChatMessages(storedChat ? JSON.parse(storedChat) : DEFAULT_CHAT_MESSAGES);
+
+    const storedUsage = localStorage.getItem(userKey(STORAGE_KEYS.USAGE, email));
+    setUsage(storedUsage ? JSON.parse(storedUsage) : { docsCount: 0, maxDocs: 3, aiCount: 0, maxAi: 5, plan: 'Free Plan' });
+  }
 
   // Save changes to localStorage
   const saveUser = (updated: User) => {
@@ -266,7 +212,9 @@ export function useSmartStudyStore() {
 
   const saveTodos = (updated: TodoItem[]) => {
     setTodos(updated);
-    if (typeof window !== 'undefined') localStorage.setItem(STORAGE_KEYS.TODOS, JSON.stringify(updated));
+    if (typeof window !== 'undefined' && user.email) {
+      localStorage.setItem(userKey(STORAGE_KEYS.TODOS, user.email), JSON.stringify(updated));
+    }
   };
 
   const saveStreak = (updated: UserStreak) => {
@@ -274,7 +222,6 @@ export function useSmartStudyStore() {
     if (typeof window !== 'undefined') {
       const key = getStreakStorageKey(user.email);
       localStorage.setItem(key, JSON.stringify(updated));
-      localStorage.setItem(STORAGE_KEYS.STREAK, JSON.stringify(updated));
     }
   };
 
@@ -295,17 +242,23 @@ export function useSmartStudyStore() {
 
   const savePersonalSubjects = (updated: PersonalSubject[]) => {
     setPersonalSubjects(updated);
-    if (typeof window !== 'undefined') localStorage.setItem(STORAGE_KEYS.PERSONAL_SUBJECTS, JSON.stringify(updated));
+    if (typeof window !== 'undefined' && user.email) {
+      localStorage.setItem(userKey(STORAGE_KEYS.PERSONAL_SUBJECTS, user.email), JSON.stringify(updated));
+    }
   };
 
   const savePersonalDocs = (updated: PersonalDocument[]) => {
     setPersonalDocs(updated);
-    if (typeof window !== 'undefined') localStorage.setItem(STORAGE_KEYS.PERSONAL_DOCS, JSON.stringify(updated));
+    if (typeof window !== 'undefined' && user.email) {
+      localStorage.setItem(userKey(STORAGE_KEYS.PERSONAL_DOCS, user.email), JSON.stringify(updated));
+    }
   };
 
   const saveChat = (updated: ChatMessage[]) => {
     setChatMessages(updated);
-    if (typeof window !== 'undefined') localStorage.setItem(STORAGE_KEYS.CHAT_MESSAGES, JSON.stringify(updated));
+    if (typeof window !== 'undefined' && user.email) {
+      localStorage.setItem(userKey(STORAGE_KEYS.CHAT_MESSAGES, user.email), JSON.stringify(updated));
+    }
   };
 
   const saveStudyGroups = (updated: StudyGroup[]) => {
@@ -320,7 +273,9 @@ export function useSmartStudyStore() {
         docsCount: type === 'docs' ? prev.docsCount + 1 : prev.docsCount,
         aiCount: type === 'ai' ? prev.aiCount + 1 : prev.aiCount,
       };
-      if (typeof window !== 'undefined') localStorage.setItem(STORAGE_KEYS.USAGE, JSON.stringify(next));
+      if (typeof window !== 'undefined' && user.email) {
+        localStorage.setItem(userKey(STORAGE_KEYS.USAGE, user.email), JSON.stringify(next));
+      }
       return next;
     });
   };
@@ -361,12 +316,21 @@ export function useSmartStudyStore() {
   }, []);
 
   // Supabase Auth session listener
+  // IMPORTANT: We only use Supabase to validate an *already-initiated* login (i.e., after the user
+  // explicitly clicked "Sign In"). We do NOT auto-restore an ambient Supabase session on page load,
+  // because that would log in whoever has a saved browser session (e.g., the developer's own Google
+  // account). Instead, we only listen for auth state changes that happen *during* the current session.
   useEffect(() => {
     if (typeof window === 'undefined') return;
+    if (!isSupabaseConfigured()) return;
 
-    if (isSupabaseConfigured()) {
-      supabase.auth.getSession().then(({ data: { session } }) => {
-        if (session?.user) {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      // Only act on explicit sign-in / sign-out events, not on passive INITIAL_SESSION restoration
+      if (event === 'SIGNED_IN' && session?.user) {
+        const storedUser = localStorage.getItem(STORAGE_KEYS.USER);
+        const storedEmail = storedUser ? JSON.parse(storedUser)?.email : '';
+        // Only sync Supabase user if the stored local user matches (i.e., same login flow)
+        if (storedEmail && storedEmail.toLowerCase() === session.user.email?.toLowerCase()) {
           const userEmail = session.user.email || '';
           const userName = session.user.user_metadata?.full_name || userEmail.split('@')[0] || 'Student';
           const role = isSuperadminEmail(userEmail) ? 'superadmin' : 'student';
@@ -378,35 +342,20 @@ export function useSmartStudyStore() {
             isLoggedIn: true,
           };
           saveUser(u);
+          loadUserScopedData(userEmail);
         }
-      });
-
-      const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-        if (session?.user) {
-          const userEmail = session.user.email || '';
-          const userName = session.user.user_metadata?.full_name || userEmail.split('@')[0] || 'Student';
-          const role = isSuperadminEmail(userEmail) ? 'superadmin' : 'student';
-          const u: User = {
-            id: session.user.id,
-            name: userName,
-            email: userEmail,
-            role,
-            isLoggedIn: true,
-          };
-          saveUser(u);
-        } else {
-          // If no local custom session exists, reset to logged-out guest
-          const stored = localStorage.getItem(STORAGE_KEYS.USER);
-          if (!stored || JSON.parse(stored).email === '') {
-            setUser(DEFAULT_USER);
-          }
+      } else if (event === 'SIGNED_OUT') {
+        // Only clear if there's no manual local session active
+        const storedUser = localStorage.getItem(STORAGE_KEYS.USER);
+        if (!storedUser || !JSON.parse(storedUser)?.isLoggedIn) {
+          setUser(DEFAULT_USER);
         }
-      });
+      }
+    });
 
-      return () => {
-        subscription.unsubscribe();
-      };
-    }
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
   // Auth actions
@@ -422,6 +371,10 @@ export function useSmartStudyStore() {
     };
     saveUser(updated);
 
+    // Load this user's personal scoped data
+    loadUserScopedData(email);
+
+    // Restore streak for this user
     if (typeof window !== 'undefined') {
       const userStreakKey = getStreakStorageKey(email);
       const stored = localStorage.getItem(userStreakKey);
@@ -461,8 +414,18 @@ export function useSmartStudyStore() {
       role: 'student',
       isLoggedIn: false,
     };
-    saveUser(updated);
+    // Clear user record
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(updated));
+    }
+    setUser(updated);
+    // Reset all personal data to empty defaults
+    setTodos(DEFAULT_TODOS);
+    setPersonalSubjects(DEFAULT_PERSONAL_SUBJECTS);
+    setPersonalDocs(DEFAULT_PERSONAL_DOCS);
+    setChatMessages(DEFAULT_CHAT_MESSAGES);
     setStreak(DEFAULT_STREAK);
+    setUsage({ docsCount: 0, maxDocs: 3, aiCount: 0, maxAi: 5, plan: 'Free Plan' });
   };
 
   const switchUserRole = (newRole: 'student' | 'superadmin') => {

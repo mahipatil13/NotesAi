@@ -70,7 +70,7 @@ export default function DashboardPage() {
 
   // Upload Modal State (clean modal instead of inline clutter)
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
-  const [selectedSubjectId, setSelectedSubjectId] = useState(personalSubjects[0]?.id || '');
+  const [selectedSubjectId, setSelectedSubjectId] = useState<string>('');
   const [stagedFile, setStagedFile] = useState<File | null>(null);
   const [docCustomTitle, setDocCustomTitle] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
@@ -565,6 +565,20 @@ export default function DashboardPage() {
             </button>
           </div>
 
+          {personalSubjects.length === 0 ? (
+            <div className="py-12 text-center border border-dashed border-slate-200 rounded-xl bg-white">
+              <Layers className="w-8 h-8 mx-auto mb-2 text-slate-300" />
+              <p className="font-semibold text-slate-600 text-sm">No subjects yet</p>
+              <p className="text-xs text-slate-400 mt-1 mb-4">Add your first subject to start organizing your notes.</p>
+              <button
+                onClick={() => setIsNewSubjectOpen(true)}
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                Add First Subject
+              </button>
+            </div>
+          ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {personalSubjects.map((sub) => {
               const count = personalDocs.filter((d) => d.subjectId === sub.id).length;
@@ -609,6 +623,7 @@ export default function DashboardPage() {
               );
             })}
           </div>
+          )}
         </div>
 
       </main>
