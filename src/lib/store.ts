@@ -51,17 +51,23 @@ function userKey(base: string, email: string): string {
   return `${base}__${safe}`;
 }
 
-export const SUPERADMIN_EMAILS = [
-  'mahipatil13@gmail.com',
-  'maheshpatil13@gmail.com',
-  'mahiiipatil13@gmail.com',
-  'mahesh@college.edu',
-];
-
+// Superadmin emails are read from the NEXT_PUBLIC_SUPERADMIN_EMAILS env variable at runtime.
+// Format: a comma-separated list, e.g. "admin@example.com,owner@example.com"
+// Never commit real email addresses to source control — set this in your .env.local file.
+// The fallback list below is for LOCAL DEVELOPMENT ONLY and will not appear in a production build
+// if the env variable is set.
+function getSuperadminEmails(): string[] {
+  const fromEnv = process.env.NEXT_PUBLIC_SUPERADMIN_EMAILS;
+  if (fromEnv && fromEnv.trim()) {
+    return fromEnv.split(',').map((e) => e.trim().toLowerCase()).filter(Boolean);
+  }
+  // Dev fallback — remove or replace with your own email in .env.local
+  return ['mahesh@college.edu'];
+}
 
 export function isSuperadminEmail(email?: string): boolean {
   if (!email) return false;
-  return SUPERADMIN_EMAILS.some((e) => e.toLowerCase() === email.trim().toLowerCase());
+  return getSuperadminEmails().includes(email.trim().toLowerCase());
 }
 
 const DEFAULT_USER: User = {
@@ -365,8 +371,26 @@ export function useSmartStudyStore() {
   const loginUser = (email: string, name?: string, role?: 'student' | 'superadmin') => {
     const userRole = role || (isSuperadminEmail(email) ? 'superadmin' : 'student');
     const userName = name || (email.split('@')[0] ? email.split('@')[0].charAt(0).toUpperCase() + email.split('@')[0].slice(1) : 'Student');
+
+    // Preserve the existing user ID for this email so ownership checks remain valid across sessions.
+    // Generate a new ID only for first-time logins.
+    let existingId = '';
+    if (typeof window !== 'undefined') {
+      try {
+        const stored = localStorage.getItem(STORAGE_KEYS.USER);
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (parsed.email?.toLowerCase() === email.toLowerCase() && parsed.id) {
+            existingId = parsed.id;
+          }
+        }
+      } catch {
+        // ignore parse errors
+      }
+    }
+
     const updated: User = {
-      id: `usr-${Date.now()}`,
+      id: existingId || `usr-${Date.now()}`,
       name: userName,
       email,
       role: userRole,

@@ -1,16 +1,17 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { GraduationCap, ArrowRight, Lock, Mail, User } from 'lucide-react';
 
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import { useSmartStudyStore } from '@/lib/store';
 
-export default function SignupPage() {
+function SignupContent() {
   const router = useRouter();
-  const { loginUser } = useSmartStudyStore();
+  const searchParams = useSearchParams();
+  const { loginUser, user, isLoaded } = useSmartStudyStore();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -19,6 +20,20 @@ export default function SignupPage() {
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
+
+  // Already logged-in users should not see this page
+  useEffect(() => {
+    if (!isLoaded) return;
+    if (user.isLoggedIn) {
+      const redirect = searchParams.get('redirect');
+      router.replace(redirect && redirect.startsWith('/') ? redirect : '/dashboard');
+    }
+  }, [isLoaded, user.isLoggedIn, router, searchParams]);
+
+  const navigateAfterLogin = () => {
+    const redirect = searchParams.get('redirect');
+    router.push(redirect && redirect.startsWith('/') ? redirect : '/dashboard');
+  };
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,7 +66,7 @@ export default function SignupPage() {
         // Check if session exists or confirmation email sent
         if (data?.session) {
           loginUser(email, name);
-          router.push('/dashboard');
+          navigateAfterLogin();
           return;
         } else if (data?.user && !data.session) {
           setSuccessMsg('Account created! Please check your email inbox to verify your account, or sign in.');
@@ -61,7 +76,7 @@ export default function SignupPage() {
       }
 
       loginUser(email, name);
-      router.push('/dashboard');
+      navigateAfterLogin();
     } catch (err: unknown) {
 
       const message = err instanceof Error ? err.message : 'Failed to sign up';
@@ -71,6 +86,8 @@ export default function SignupPage() {
     }
   };
 
+  // Show nothing while checking session state to prevent flash of signup form for logged-in users
+  if (!isLoaded || user.isLoggedIn) return null;
 
   const handleGoogleSignIn = async () => {
     setLoading(true);
@@ -89,7 +106,7 @@ export default function SignupPage() {
         }
       } else {
         loginUser('google.user@college.edu', 'Google Student');
-        router.push('/dashboard');
+        navigateAfterLogin();
       }
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Failed to connect to Google';
@@ -261,5 +278,13 @@ export default function SignupPage() {
 
       </div>
     </div>
+  );
+}
+
+export default function SignupPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[#f8fafc]" />}>
+      <SignupContent />
+    </Suspense>
   );
 }

@@ -1,20 +1,36 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { GraduationCap, ArrowRight, Lock, Mail } from 'lucide-react';
 
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import { useSmartStudyStore } from '@/lib/store';
 
-export default function LoginPage() {
+function LoginContent() {
   const router = useRouter();
-  const { loginUser } = useSmartStudyStore();
+  const searchParams = useSearchParams();
+  const { loginUser, user, isLoaded } = useSmartStudyStore();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  // If the user is already logged in, send them where they were going (or dashboard)
+  useEffect(() => {
+    if (!isLoaded) return;
+    if (user.isLoggedIn) {
+      const redirect = searchParams.get('redirect');
+      router.replace(redirect && redirect.startsWith('/') ? redirect : '/dashboard');
+    }
+  }, [isLoaded, user.isLoggedIn, router, searchParams]);
+
+  // Helper: navigate to the intended destination after a successful login
+  const navigateAfterLogin = () => {
+    const redirect = searchParams.get('redirect');
+    router.push(redirect && redirect.startsWith('/') ? redirect : '/dashboard');
+  };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,10 +55,9 @@ export default function LoginPage() {
       } else {
         loginUser(email);
       }
-      
-      router.push('/dashboard');
-    } catch (err: unknown) {
 
+      navigateAfterLogin();
+    } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Failed to sign in';
       setErrorMsg(message);
     } finally {
@@ -50,16 +65,19 @@ export default function LoginPage() {
     }
   };
 
-
   const handleGoogleSignIn = async () => {
     setLoading(true);
     setErrorMsg(null);
     try {
       if (isSupabaseConfigured()) {
+        // Pass the redirect destination through so OAuth lands in the right place
+        const redirect = searchParams.get('redirect');
+        const base = typeof window !== 'undefined' ? window.location.origin : '';
+        const destination = redirect && redirect.startsWith('/') ? redirect : '/dashboard';
         const { error } = await supabase.auth.signInWithOAuth({
           provider: 'google',
           options: {
-            redirectTo: typeof window !== 'undefined' ? `${window.location.origin}/dashboard` : undefined,
+            redirectTo: `${base}${destination}`,
           },
         });
         if (error) {
@@ -68,7 +86,7 @@ export default function LoginPage() {
         }
       } else {
         loginUser('google.user@college.edu', 'Google Student');
-        router.push('/dashboard');
+        navigateAfterLogin();
       }
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Failed to connect to Google';
@@ -76,6 +94,9 @@ export default function LoginPage() {
       setLoading(false);
     }
   };
+
+  // Show nothing while we check whether the user is already logged in
+  if (!isLoaded || user.isLoggedIn) return null;
 
   return (
     <div className="min-h-screen flex flex-col justify-center items-center bg-[#f8fafc] text-slate-900 px-4 py-12">
@@ -192,5 +213,13 @@ export default function LoginPage() {
 
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[#f8fafc]" />}>
+      <LoginContent />
+    </Suspense>
   );
 }

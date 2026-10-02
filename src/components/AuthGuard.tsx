@@ -22,7 +22,11 @@ export default function AuthGuard({ children, requireAdmin = false }: AuthGuardP
     if (!isLoaded) return;
 
     if (!user.isLoggedIn && !PUBLIC_PATHS.includes(pathname)) {
+      // Not logged in on a protected route → send to login with return destination
       router.replace(`/login?redirect=${encodeURIComponent(pathname)}`);
+    } else if (user.isLoggedIn && PUBLIC_PATHS.includes(pathname)) {
+      // Already logged in but visiting /login or /signup → bounce to dashboard
+      router.replace('/dashboard');
     } else if (requireAdmin && user.role !== 'superadmin') {
       router.replace('/dashboard');
     }

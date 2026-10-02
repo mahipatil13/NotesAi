@@ -1,10 +1,10 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import AuthGuard from '@/components/AuthGuard';
 import { 
   Sparkles, 
   BookOpen, 
@@ -15,7 +15,15 @@ import {
 import { useSmartStudyStore } from '@/lib/store';
 
 export default function HomePage() {
-  const { user, departments, notes } = useSmartStudyStore();
+  const { user, isLoaded, departments, notes } = useSmartStudyStore();
+  const router = useRouter();
+
+  // Redirect logged-in users straight to dashboard — they have no reason to see the landing page
+  useEffect(() => {
+    if (isLoaded && user.isLoggedIn) {
+      router.replace('/dashboard');
+    }
+  }, [isLoaded, user.isLoggedIn, router]);
 
   const getDeptNoteCount = (deptId: string) => {
     return notes.filter(
@@ -23,9 +31,19 @@ export default function HomePage() {
     ).length;
   };
 
+  // Show a loading spinner while restoring session — avoids flash of landing page for returning users
+  if (!isLoaded) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-[#f8fafc]">
+        <div className="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-xs animate-pulse">
+          <LayoutDashboard className="w-5 h-5" />
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <AuthGuard>
-      <div className="min-h-screen flex flex-col bg-[#f8fafc] text-slate-900">
+    <div className="min-h-screen flex flex-col bg-[#f8fafc] text-slate-900">
         <Navbar />
 
         {/* Hero Section */}
@@ -204,6 +222,5 @@ export default function HomePage() {
 
         <Footer />
       </div>
-    </AuthGuard>
   );
 }
