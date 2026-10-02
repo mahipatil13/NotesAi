@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { GraduationCap, ArrowRight, Lock, Mail, User, BookOpen } from 'lucide-react';
+import { GraduationCap, ArrowRight, Lock, Mail, User } from 'lucide-react';
 
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import { useSmartStudyStore } from '@/lib/store';
@@ -51,11 +51,7 @@ export default function SignupPage() {
         // Check if session exists or confirmation email sent
         if (data?.session) {
           loginUser(email, name);
-          if (typeof window !== 'undefined') {
-            window.location.href = '/dashboard';
-          } else {
-            router.push('/dashboard');
-          }
+          router.push('/dashboard');
           return;
         } else if (data?.user && !data.session) {
           setSuccessMsg('Account created! Please check your email inbox to verify your account, or sign in.');
@@ -65,11 +61,7 @@ export default function SignupPage() {
       }
 
       loginUser(email, name);
-      if (typeof window !== 'undefined') {
-        window.location.href = '/dashboard';
-      } else {
-        router.push('/dashboard');
-      }
+      router.push('/dashboard');
     } catch (err: unknown) {
 
       const message = err instanceof Error ? err.message : 'Failed to sign up';

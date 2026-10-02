@@ -14,10 +14,7 @@ import {
   ExternalLink, 
   Send, 
   Copy, 
-  CheckCircle2, 
-  ShieldCheck, 
   Plus, 
-  User, 
   KeyRound,
   X,
   MessageSquare
@@ -32,7 +29,7 @@ export default function GroupWorkspacePage({
 }) {
   const resolvedParams = use(params);
   const groupId = resolvedParams.groupId;
-  const { user, studyGroups, joinStudyGroup, addGroupMessage, addGroupNote, personalDocs, notes } = useSmartStudyStore();
+  const { user, studyGroups, joinStudyGroup, addGroupMessage, addGroupNote, notes } = useSmartStudyStore();
 
   const group = studyGroups.find((g) => g.id === groupId);
 

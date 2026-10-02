@@ -11,9 +11,7 @@ import Link from 'next/link';
 import { 
   Upload, 
   FileText, 
-  FolderPlus, 
   Trash2, 
-  Sparkles, 
   Plus, 
   X,
   BookOpen,
@@ -25,7 +23,6 @@ import {
   CheckSquare,
   Square,
   Clock,
-  Calendar,
   Layers,
   Users,
   Check,
@@ -47,7 +44,6 @@ export default function DashboardPage() {
     addPersonalSubject, 
     deletePersonalSubject, 
     addPersonalDoc,
-    deletePersonalDoc
   } = useSmartStudyStore();
 
   // Streak check-in feedback state
@@ -475,7 +471,7 @@ export default function DashboardPage() {
                 <div className="py-10 text-center text-slate-400 text-xs">
                   <CheckSquare className="w-8 h-8 mx-auto mb-2 text-slate-300" />
                   <p className="font-medium text-slate-600">No {todoFilter !== 'all' ? todoFilter : ''} study tasks found</p>
-                  <p className="text-[11px] mt-0.5">Click "+ Add Task" to set a study target for today.</p>
+                  <p className="text-[11px] mt-0.5">Click &quot;+ Add Task&quot; to set a study target for today.</p>
                 </div>
               ) : (
                 <div className="divide-y divide-slate-100 max-h-[300px] overflow-y-auto pr-1">

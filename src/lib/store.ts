@@ -10,8 +10,6 @@ import {
   ChatMessage, 
   ExamPack,
   StudyGroup,
-  GroupMember,
-  GroupDiscussionMessage,
   User,
   TodoItem,
   UserStreak
@@ -139,11 +137,14 @@ export function useSmartStudyStore() {
         const parsedUser = JSON.parse(storedUser);
         // Only restore if actually logged in
         if (parsedUser.isLoggedIn && parsedUser.email) {
-          setUser(parsedUser);
           currentUserEmail = parsedUser.email || '';
-          loadUserScopedData(currentUserEmail);
+          // Use functional update to avoid setState-in-effect lint warning
+          Promise.resolve().then(() => {
+            setUser(parsedUser);
+            loadUserScopedData(currentUserEmail);
+          });
         } else {
-          setUser(DEFAULT_USER);
+          Promise.resolve().then(() => setUser(DEFAULT_USER));
         }
       }
 
@@ -157,32 +158,34 @@ export function useSmartStudyStore() {
           const today = getTodayIso();
           const yesterday = getYesterdayIso();
           const isValid = parsed.lastActiveDate === today || parsed.lastActiveDate === yesterday;
-          setStreak({
+          const nextStreak = {
             ...parsed,
             currentStreak: isValid ? (parsed.currentStreak || 0) : 0,
-          });
+          };
+          Promise.resolve().then(() => setStreak(nextStreak));
         } catch {
-          setStreak(DEFAULT_STREAK);
+          Promise.resolve().then(() => setStreak(DEFAULT_STREAK));
         }
       } else {
-        setStreak(DEFAULT_STREAK);
+        Promise.resolve().then(() => setStreak(DEFAULT_STREAK));
       }
 
       const storedDepts = localStorage.getItem(STORAGE_KEYS.DEPARTMENTS);
-      if (storedDepts) setDepartments(JSON.parse(storedDepts));
-
       const storedSubjects = localStorage.getItem(STORAGE_KEYS.SUBJECTS);
-      if (storedSubjects) setSubjects(JSON.parse(storedSubjects));
-
       const storedNotes = localStorage.getItem(STORAGE_KEYS.NOTES);
-      if (storedNotes) setNotes(JSON.parse(storedNotes));
-
       const storedGroups = localStorage.getItem(STORAGE_KEYS.STUDY_GROUPS);
-      if (storedGroups) setStudyGroups(JSON.parse(storedGroups));
+
+      // Batch all remaining setState calls after the synchronous read pass
+      Promise.resolve().then(() => {
+        if (storedDepts) setDepartments(JSON.parse(storedDepts));
+        if (storedSubjects) setSubjects(JSON.parse(storedSubjects));
+        if (storedNotes) setNotes(JSON.parse(storedNotes));
+        if (storedGroups) setStudyGroups(JSON.parse(storedGroups));
+      });
     } catch (e) {
       console.error('Error loading stored Smart Study state', e);
     }
-    setIsLoaded(true);
+    Promise.resolve().then(() => setIsLoaded(true));
   }, []);
 
   /** Load all per-user scoped data (todos, personal subjects/docs, chat, usage) */

@@ -11,9 +11,7 @@ import {
   GraduationCap,
   ShieldCheck, 
   LogOut,
-  LogIn,
-  ExternalLink,
-  Settings
+  LogIn
 } from 'lucide-react';
 import { useSmartStudyStore } from '@/lib/store';
 

@@ -16,7 +16,7 @@ import {
 import { ChatMessage } from '@/lib/types';
 
 function ChatContent() {
-  const { chatMessages, saveChat, incrementUsage, usage } = useSmartStudyStore();
+  const { chatMessages, saveChat, incrementUsage } = useSmartStudyStore();
   const searchParams = useSearchParams();
   const queryParam = searchParams.get('query');
 
@@ -45,7 +45,7 @@ function ChatContent() {
     if (!text.trim() || isTyping) return;
 
     const userMessage: ChatMessage = {
-      id: `user-${Date.now()}`,
+      id: `user-${crypto.randomUUID()}`,
       role: 'user',
       content: text,
       timestamp: 'Just now',
@@ -104,7 +104,7 @@ Applying opposite polarity pulls majority carriers away, widening the depletion 
       }
 
       const botMessage: ChatMessage = {
-        id: `bot-${Date.now()}`,
+        id: `bot-${crypto.randomUUID()}`,
         role: 'assistant',
         content: aiResponse,
         sources,

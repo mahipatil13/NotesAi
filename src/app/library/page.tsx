@@ -22,19 +22,15 @@ import {
   ExternalLink,
   ChevronRight,
   Columns,
-  GraduationCap,
-  Layers,
   Filter,
   Trash2,
   Clock,
-  Lock,
   ShieldCheck,
   UploadCloud,
   FileUp,
   File,
   Loader2,
-  AlertCircle,
-  FileCheck
+  AlertCircle
 } from 'lucide-react';
 
 export default function LibraryPage() {
@@ -77,7 +73,7 @@ export default function LibraryPage() {
   const [isUploadOpen, setIsUploadOpen] = useState(false);
   const [uploadDept, setUploadDept] = useState('cse');
   const [uploadSemester, setUploadSemester] = useState(3);
-  const [uploadSubjectId, setUploadSubjectId] = useState('');
+  const uploadSubjectId = '';
   const [uploadTitle, setUploadTitle] = useState('');
   const [uploadDescription, setUploadDescription] = useState('');
   const [uploadUploader, setUploadUploader] = useState(user.name || '');
@@ -246,7 +242,7 @@ export default function LibraryPage() {
     const assignedNoteId = `lib-${Date.now()}`;
     let generatedExamPack = null;
     let finalPages = stagedFile ? Math.max(1, Math.round(stagedFile.size / 75000)) : Math.floor(Math.random() * 15) + 8;
-    let fileSizeStr = stagedFile 
+    const fileSizeStr = stagedFile 
       ? (stagedFile.size > 1024 * 1024 
           ? `${(stagedFile.size / (1024 * 1024)).toFixed(1)} MB` 
           : `${Math.round(stagedFile.size / 1024)} KB`)
@@ -344,9 +340,9 @@ export default function LibraryPage() {
         setUploadDescription('');
       }, 1500);
 
-    } catch (err: any) {
+    } catch (err: unknown) {
       setIsProcessingUpload(false);
-      setUploadError(err.message || 'Failed to submit document. Please try again.');
+      setUploadError(err instanceof Error ? err.message : 'Failed to submit document. Please try again.');
     }
   };
 
@@ -659,7 +655,6 @@ export default function LibraryPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {filteredNotes.map((note) => {
                 const dept = departments.find((d) => d.id === note.departmentId);
-                const subj = subjects.find((s) => s.id === note.subjectId);
 
                 const isSuper = user.role === 'superadmin';
                 const isOwner = (note.uploaderId && note.uploaderId === user.id) || 

@@ -12,14 +12,11 @@ import {
   Lock, 
   KeyRound, 
   Plus, 
-  FileText, 
   ArrowRight, 
-  MessageSquare, 
   CheckCircle2, 
   X, 
   ShieldCheck,
-  Copy,
-  Sparkles
+  Copy
 } from 'lucide-react';
 
 export default function StudyGroupsPage() {
@@ -35,8 +32,7 @@ export default function StudyGroupsPage() {
   const [newGroupDesc, setNewGroupDesc] = useState('');
   const [newGroupDept, setNewGroupDept] = useState(departments[0]?.code || 'CSE');
   const [newGroupSem, setNewGroupSem] = useState(3);
-  const [newGroupCreator, setNewGroupCreator] = useState(user.name || 'Student');
-
+  const newGroupCreator = user.name || 'Student';
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
 
   const handleCopyCode = (code: string, e: React.MouseEvent) => {
@@ -272,7 +268,7 @@ export default function StudyGroupsPage() {
             <div>
               <h4 className="font-bold text-xs sm:text-sm text-slate-900">How Private Study Groups Work</h4>
               <p className="text-xs text-slate-500 mt-0.5 leading-relaxed">
-                Groups are locked by default. Non-members cannot view uploaded documents or discussions without entering your group's private 6-digit invite code.
+                Groups are locked by default. Non-members cannot view uploaded documents or discussions without entering your group&apos;s private 6-digit invite code.
               </p>
             </div>
           </div>

@@ -40,11 +40,7 @@ export default function LoginPage() {
         loginUser(email);
       }
       
-      if (typeof window !== 'undefined') {
-        window.location.href = '/dashboard';
-      } else {
-        router.push('/dashboard');
-      }
+      router.push('/dashboard');
     } catch (err: unknown) {
 
       const message = err instanceof Error ? err.message : 'Failed to sign in';
@@ -187,7 +183,7 @@ export default function LoginPage() {
 
         {/* Bottom link */}
         <div className="text-center text-xs text-slate-500">
-          Don't have an account?{' '}
+          Don&apos;t have an account?{' '}
           <Link href="/signup" className="text-indigo-600 font-medium hover:underline">
             Create account
           </Link>

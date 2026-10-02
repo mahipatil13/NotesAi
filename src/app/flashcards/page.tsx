@@ -9,8 +9,7 @@ import {
   Layers, 
   RotateCw, 
   ChevronLeft, 
-  ChevronRight, 
-  HelpCircle 
+  ChevronRight
 } from 'lucide-react';
 
 import AuthGuard from '@/components/AuthGuard';

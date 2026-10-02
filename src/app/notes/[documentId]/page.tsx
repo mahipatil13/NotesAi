@@ -8,23 +8,13 @@ import Link from 'next/link';
 import { 
   FileText, 
   Sparkles, 
-  ChevronLeft, 
-  ChevronRight, 
-  ZoomIn, 
-  ZoomOut, 
   Printer, 
   ArrowLeft,
   Columns,
-  Maximize2,
   ExternalLink,
-  BookOpen,
-  Award,
-  Layers,
   Upload,
   Download,
   CheckCircle2,
-  FileCheck,
-  RefreshCw,
   Trash2
 } from 'lucide-react';
 import { getPdfBlob, storePdfBlob } from '@/lib/pdfStorage';
@@ -49,7 +39,7 @@ export default function DocumentWorkspacePage({
     personalDocs.find((d) => d.id === documentId) || 
     notes[0];
 
-  const docTitle = 'title' in currentDoc ? currentDoc.title : (currentDoc as any).name;
+  const docTitle = 'title' in currentDoc ? currentDoc.title : (currentDoc as { name: string }).name;
   const examPack = currentDoc.examPack;
 
   // Workspace layout mode: split (side-by-side) | pdf (original only) | summary (ai summarize only)
@@ -57,16 +47,14 @@ export default function DocumentWorkspacePage({
 
   // PDF Viewer state
   const [currentPage, setCurrentPage] = useState(1);
-  const [zoomLevel, setZoomLevel] = useState(100);
   const [activeTab, setActiveTab] = useState<'summary' | 'keyConcepts' | 'definitions' | 'questions'>('summary');
-  const [activeHighlightPage, setActiveHighlightPage] = useState<number | null>(null);
 
   // Real PDF document source
   const [pdfSourceUrl, setPdfSourceUrl] = useState<string | null>(null);
   const [isAttachingPdf, setIsAttachingPdf] = useState(false);
   const attachInputRef = useRef<HTMLInputElement>(null);
 
-  const totalPages = (currentDoc as any).pages || 28;
+  const totalPages = (currentDoc as { pages?: number }).pages || 28;
 
   useEffect(() => {
     let isCancelled = false;
@@ -92,13 +80,13 @@ export default function DocumentWorkspacePage({
           setPdfSourceUrl(`/api/documents/${documentId}`);
           return;
         }
-      } catch (err) {
+      } catch {
         // server endpoint head check error ignored
       }
 
       // 3. Fallback to doc's fileUrl property if set
-      if (currentDoc && (currentDoc as any).fileUrl && !isCancelled) {
-        setPdfSourceUrl((currentDoc as any).fileUrl);
+      if (currentDoc && (currentDoc as { fileUrl?: string }).fileUrl && !isCancelled) {
+        setPdfSourceUrl((currentDoc as { fileUrl?: string }).fileUrl!);
       }
     }
 
@@ -131,8 +119,8 @@ export default function DocumentWorkspacePage({
         method: 'POST',
         body: formData
       });
-    } catch (err) {
-      console.error('Failed to attach PDF:', err);
+    } catch {
+      console.error('Failed to attach PDF:');
     } finally {
       setIsAttachingPdf(false);
       e.target.value = '';
@@ -142,8 +130,6 @@ export default function DocumentWorkspacePage({
   const handlePageJump = (page: number) => {
     if (page >= 1 && page <= totalPages) {
       setCurrentPage(page);
-      setActiveHighlightPage(page);
-      setTimeout(() => setActiveHighlightPage(null), 2000);
     }
   };
 

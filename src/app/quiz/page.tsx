@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, Suspense } from 'react';
+import React, { useState, Suspense } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { useSmartStudyStore } from '@/lib/store';
@@ -36,11 +36,6 @@ function QuizContent() {
   const [selectedNoteId, setSelectedNoteId] = useState<string>(
     noteIdParam || personalDocIdParam || allAvailableNotes[0]?.id || ''
   );
-
-  useEffect(() => {
-    if (noteIdParam) setSelectedNoteId(noteIdParam);
-    else if (personalDocIdParam) setSelectedNoteId(personalDocIdParam);
-  }, [noteIdParam, personalDocIdParam]);
 
   const activeNote = allAvailableNotes.find((n) => n.id === selectedNoteId) || allAvailableNotes[0];
   const mcqs = activeNote?.examPack?.mcqs || [];

@@ -11,17 +11,17 @@ interface AuthGuardProps {
   requireAdmin?: boolean;
 }
 
+const PUBLIC_PATHS = ['/login', '/signup'];
+
 export default function AuthGuard({ children, requireAdmin = false }: AuthGuardProps) {
   const router = useRouter();
   const pathname = usePathname();
   const { user, isLoaded } = useSmartStudyStore();
 
-  const publicPaths = ['/login', '/signup'];
-
   useEffect(() => {
     if (!isLoaded) return;
 
-    if (!user.isLoggedIn && !publicPaths.includes(pathname)) {
+    if (!user.isLoggedIn && !PUBLIC_PATHS.includes(pathname)) {
       router.replace(`/login?redirect=${encodeURIComponent(pathname)}`);
     } else if (requireAdmin && user.role !== 'superadmin') {
       router.replace('/dashboard');
@@ -46,7 +46,7 @@ export default function AuthGuard({ children, requireAdmin = false }: AuthGuardP
   }
 
   // If not logged in and on a protected route
-  if (!user.isLoggedIn && !publicPaths.includes(pathname)) {
+  if (!user.isLoggedIn && !PUBLIC_PATHS.includes(pathname)) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-[#f8fafc] text-slate-900 px-4">
         <div className="max-w-md w-full bg-white border border-slate-200 rounded-2xl p-8 shadow-xl text-center space-y-4">

@@ -2,33 +2,33 @@ import { supabase, isSupabaseConfigured } from './supabase';
 import { LibraryNote } from './types';
 
 // Map database row to LibraryNote interface
-export function mapSupabaseToLibraryNote(row: any): LibraryNote {
+export function mapSupabaseToLibraryNote(row: Record<string, unknown>): LibraryNote {
   return {
-    id: row.id,
-    subjectId: row.subject_id || row.subjectId || 'sub-1',
-    departmentId: row.department_id || row.departmentId || 'cse',
+    id: row.id as string,
+    subjectId: (row.subject_id || row.subjectId || 'sub-1') as string,
+    departmentId: (row.department_id || row.departmentId || 'cse') as string,
     semesterNumber: Number(row.semester_number || row.semesterNumber || 3),
-    title: row.title || 'Untitled Note',
-    description: row.description || '',
-    uploaderName: row.uploader_name || row.uploaderName || 'Community Member',
-    uploaderId: row.uploader_id || row.uploaderId,
-    uploaderEmail: row.uploader_email || row.uploaderEmail,
+    title: (row.title || 'Untitled Note') as string,
+    description: (row.description || '') as string,
+    uploaderName: (row.uploader_name || row.uploaderName || 'Community Member') as string,
+    uploaderId: (row.uploader_id || row.uploaderId) as string | undefined,
+    uploaderEmail: (row.uploader_email || row.uploaderEmail) as string | undefined,
     pages: Number(row.pages || 12),
-    fileSize: row.file_size || row.fileSize || '2.4 MB',
-    status: (row.status as 'APPROVED' | 'PENDING' | 'REJECTED') || 'PENDING',
-    rejectionReason: row.rejection_reason || row.rejectionReason,
+    fileSize: (row.file_size || row.fileSize || '2.4 MB') as string,
+    status: ((row.status as 'APPROVED' | 'PENDING' | 'REJECTED') || 'PENDING'),
+    rejectionReason: (row.rejection_reason || row.rejectionReason) as string | undefined,
     isPrivateGroup: Boolean(row.is_private_group || row.isPrivateGroup),
-    tags: Array.isArray(row.tags) ? row.tags : ['Syllabus', 'Exam Pack'],
+    tags: Array.isArray(row.tags) ? (row.tags as string[]) : ['Syllabus', 'Exam Pack'],
     downloads: Number(row.downloads || 0),
     views: Number(row.views || 1),
     rating: Number(row.rating || 5.0),
-    uploadedAt: row.uploaded_at || row.uploadedAt || 'Recently',
-    examPack: row.exam_pack || row.examPack || undefined,
+    uploadedAt: (row.uploaded_at || row.uploadedAt || 'Recently') as string,
+    examPack: (row.exam_pack || row.examPack || undefined) as LibraryNote['examPack'],
   };
 }
 
 // Map LibraryNote to Supabase PostgreSQL schema
-export function mapLibraryNoteToSupabase(note: LibraryNote): any {
+export function mapLibraryNoteToSupabase(note: LibraryNote): Record<string, unknown> {
   return {
     id: note.id,
     subject_id: note.subjectId,
@@ -112,7 +112,7 @@ export async function updateNoteStatusInSupabase(
   if (!isSupabaseConfigured()) return false;
 
   try {
-    const updateData: any = { status };
+    const updateData: Record<string, unknown> = { status };
     if (rejectionReason !== undefined) {
       updateData.rejection_reason = rejectionReason;
     }

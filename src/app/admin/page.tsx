@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { useSmartStudyStore } from '@/lib/store';
-import { LibraryNote, PersonalDocument } from '@/lib/types';
+import { LibraryNote } from '@/lib/types';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { 
@@ -16,16 +16,11 @@ import {
   Eye, 
   FileText, 
   Search, 
-  Filter, 
   Lock, 
   Globe, 
   Clock, 
   Check, 
-  AlertCircle,
   ExternalLink,
-  ChevronRight,
-  Sparkles,
-  ArrowRight,
   User,
   BookOpen
 } from 'lucide-react';
@@ -371,7 +366,6 @@ export default function SuperadminPage() {
                 const isGroupDoc = note.isPrivateGroup;
                 const isApproved = note.status === 'APPROVED';
                 const isPending = note.status === 'PENDING';
-                const isRejected = note.status === 'REJECTED';
 
                 return (
                   <div 
