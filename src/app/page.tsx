@@ -46,7 +46,7 @@ export default function HomePage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#f8fafc] text-slate-900">
+    <div className="landing-theme min-h-screen flex flex-col">
       <Navbar />
 
       {/* Hero Section */}
@@ -58,7 +58,7 @@ export default function HomePage() {
             <GraduationCap className="w-4 h-4 text-indigo-600" />
             <span>
               {user.name && user.name !== 'Student' && user.name !== 'Guest User'
-                ? `Welcome, ${user.name.split(' ')[0]} | Academic Workspace`
+                ? `Welcome, ${user.name.split(' ')[0]} | Your study workspace`
                 : 'Syllabus-Aligned University Exam Preparation'}
             </span>
           </div>

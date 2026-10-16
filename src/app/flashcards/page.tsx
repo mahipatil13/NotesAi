@@ -48,7 +48,7 @@ export default function FlashcardsPage() {
 
   return (
     <AuthGuard>
-      <div className="min-h-screen flex flex-col bg-[#f8fafc] text-slate-900">
+      <div className="workspace-theme min-h-screen flex flex-col">
         <Navbar />
 
         <main className="flex-1 max-w-2xl mx-auto px-4 sm:px-6 py-8 w-full flex flex-col justify-center">

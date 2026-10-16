@@ -55,21 +55,19 @@ export default function Navbar() {
     : 'MP';
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-white border-b border-slate-200 shadow-2xs">
+    <header className="sticky top-0 z-50 w-full border-b border-cyan-100/15 bg-[#091a2b]/85 shadow-2xl shadow-black/10 backdrop-blur-xl">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 h-15 flex items-center justify-between">
         
         {/* Brand Logo */}
         <Link href="/" className="flex items-center gap-2.5 group">
-          <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white shadow-xs">
+          <div className="w-8 h-8 rounded-lg bg-cyan-400/15 border border-cyan-200/25 flex items-center justify-center text-cyan-300 shadow-lg shadow-cyan-950/30">
             <GraduationCap className="w-4 h-4" />
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="font-bold text-base tracking-tight text-slate-900">
+            <span className="font-bold text-base tracking-tight text-slate-100">
               Smart Study
             </span>
-            <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-indigo-50 text-indigo-700 border border-indigo-100">
-              AI
-            </span>
+            <span className="text-[10px] font-semibold tracking-wide text-cyan-300/80">ACADEMIC WORKSPACE</span>
           </div>
         </Link>
 
@@ -84,8 +82,8 @@ export default function Navbar() {
                 href={link.href}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
                   isActive
-                    ? 'bg-slate-100 text-slate-900 font-semibold'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                    ? 'bg-cyan-300/12 text-cyan-100 font-semibold'
+                    : 'text-slate-400 hover:text-slate-100 hover:bg-white/5'
                 }`}
               >
                 <Icon className={`w-3.5 h-3.5 ${
@@ -166,7 +164,7 @@ export default function Navbar() {
                     <Link
                       href="/dashboard"
                       onClick={() => setIsUserMenuOpen(false)}
-                      className="w-full flex items-center justify-center gap-1.5 py-2 px-3 rounded-full text-xs font-semibold text-slate-700 hover:bg-slate-100 transition-colors"
+                      className="w-full flex items-center justify-center gap-1.5 py-2 px-3 rounded-full text-xs font-semibold text-slate-300 hover:bg-white/10 transition-colors"
                     >
                       <LayoutDashboard className="w-3.5 h-3.5 text-slate-400" />
                       <span>My Dashboard</span>
@@ -238,4 +236,3 @@ export default function Navbar() {
     </header>
   );
 }
-

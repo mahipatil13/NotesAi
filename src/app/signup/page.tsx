@@ -120,7 +120,7 @@ function SignupContent() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center bg-[#f8fafc] text-slate-900 px-4 py-12">
+    <div className="auth-theme min-h-screen flex flex-col justify-center items-center px-4 py-12">
       <div className="w-full max-w-sm space-y-6">
         
         {/* Logo */}

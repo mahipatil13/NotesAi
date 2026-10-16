@@ -367,7 +367,7 @@ export default function LibraryPage() {
 
   return (
     <AuthGuard>
-      <div className="min-h-screen flex flex-col bg-[#f8fafc] text-slate-900">
+      <div className="workspace-theme min-h-screen flex flex-col">
 
       <Navbar />
 

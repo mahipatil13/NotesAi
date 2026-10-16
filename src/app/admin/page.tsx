@@ -60,7 +60,7 @@ export default function SuperadminPage() {
 
   if (!isAuthorizedSuperadmin) {
     return (
-      <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900">
+      <div className="workspace-theme min-h-screen flex flex-col">
         <Navbar />
         <main className="flex-1 flex items-center justify-center p-6">
           <div className="max-w-md w-full bg-white border border-rose-200 rounded-2xl p-8 shadow-sm text-center">
@@ -182,7 +182,7 @@ export default function SuperadminPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#f8fafc] text-slate-900">
+    <div className="workspace-theme min-h-screen flex flex-col">
       <Navbar />
 
       <main className="flex-1 max-w-6xl mx-auto px-4 sm:px-6 py-8 w-full space-y-6">

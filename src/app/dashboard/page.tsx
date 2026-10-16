@@ -82,7 +82,7 @@ export default function DashboardPage() {
     if (res.alreadyChecked) {
       setStreakClaimMessage("You've already claimed today's streak! Come back tomorrow.");
     } else {
-      setStreakClaimMessage(`🔥 Streak updated! You are now on a ${res.streak.currentStreak}-day study streak!`);
+      setStreakClaimMessage(`Streak updated. You are now on a ${res.streak.currentStreak}-day study streak.`);
     }
     setTimeout(() => setStreakClaimMessage(null), 3000);
   };
@@ -272,7 +272,7 @@ export default function DashboardPage() {
 
   return (
     <AuthGuard>
-      <div className="min-h-screen flex flex-col bg-[#f8fafc] text-slate-900">
+      <div className="workspace-theme min-h-screen flex flex-col">
 
       <Navbar />
 
@@ -300,7 +300,7 @@ export default function DashboardPage() {
               )}
             </div>
             <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
-              Welcome back, {user.name.split(' ')[0]} 👋
+              Welcome back, {user.name.split(' ')[0]}
             </h1>
             <p className="text-xs sm:text-sm text-slate-500 mt-1 max-w-2xl">
               Focus on your semester targets. Track your daily study habits, manage your exam to-do list, and review your subjects.
@@ -387,8 +387,8 @@ export default function DashboardPage() {
                 </div>
                 <p className="text-[11px] text-amber-700 mt-1 font-medium">
                   {streak.currentStreak >= 7 
-                    ? "🌟 Incredible dedication! You've achieved your weekly study badge." 
-                    : `🔥 Only ${7 - (streak.currentStreak % 7)} days to your next Consistency Badge!`
+                    ? "Incredible dedication. You've achieved your weekly study badge." 
+                    : `Only ${7 - (streak.currentStreak % 7)} days to your next consistency badge.`
                   }
                 </p>
               </div>

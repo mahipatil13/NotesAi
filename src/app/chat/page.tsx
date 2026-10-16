@@ -96,7 +96,7 @@ function ChatContent() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#f8fafc] text-slate-900">
+    <div className="workspace-theme min-h-screen flex flex-col">
       <Navbar />
 
       <main className="flex-1 max-w-4xl mx-auto px-4 sm:px-6 py-6 w-full flex flex-col">

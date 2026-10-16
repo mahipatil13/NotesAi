@@ -177,7 +177,7 @@ export default function DocumentWorkspacePage({
   if (!currentDoc) {
     return (
       <AuthGuard>
-        <div className="min-h-screen flex flex-col bg-[#f8fafc] text-slate-900">
+        <div className="workspace-theme min-h-screen flex flex-col">
           <Navbar />
           <div className="flex-1 flex items-center justify-center p-6">
             <div className="max-w-md w-full bg-white border border-slate-200 rounded-2xl p-8 text-center shadow-xs">
@@ -210,7 +210,7 @@ export default function DocumentWorkspacePage({
 
   return (
     <AuthGuard>
-      <div className="min-h-screen flex flex-col bg-[#f8fafc] text-slate-900">
+      <div className="workspace-theme min-h-screen flex flex-col">
         <Navbar />
 
         {/* Top Workspace Toolbar */}

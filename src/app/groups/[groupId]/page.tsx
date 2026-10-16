@@ -61,7 +61,7 @@ export default function GroupWorkspacePage({
   if (!group) {
     return (
       <AuthGuard>
-        <div className="min-h-screen flex flex-col bg-[#f8fafc] text-slate-900">
+        <div className="workspace-theme min-h-screen flex flex-col">
           <Navbar />
           <div className="flex-1 max-w-md mx-auto px-4 py-16 text-center">
             <Lock className="w-12 h-12 text-slate-400 mx-auto mb-3" />
@@ -124,7 +124,7 @@ export default function GroupWorkspacePage({
 
   return (
     <AuthGuard>
-      <div className="min-h-screen flex flex-col bg-[#f8fafc] text-slate-900">
+      <div className="workspace-theme min-h-screen flex flex-col">
         <Navbar />
 
         <main className="flex-1 max-w-6xl mx-auto px-4 sm:px-6 py-6 w-full">
