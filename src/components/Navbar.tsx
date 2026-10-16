@@ -118,6 +118,8 @@ export default function Navbar() {
                 className="relative rounded-full p-0.5 transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/50 hover:ring-3 hover:ring-slate-200"
                 title={`${user.name} (${user.email})`}
                 aria-label="Account details"
+                aria-expanded={isUserMenuOpen}
+                aria-haspopup="true"
               >
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white shadow-2xs cursor-pointer ${
                   user.role === 'superadmin' ? 'bg-amber-600' : 'bg-indigo-600'

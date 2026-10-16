@@ -471,11 +471,20 @@ export default function GroupWorkspacePage({
 
         {/* Modal: Share Note to Group */}
         {isShareNoteOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs">
+          <div 
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="share-note-title"
+          >
             <div className="w-full max-w-md bg-white border border-slate-200 rounded-2xl p-6 shadow-xl text-slate-900">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="font-bold text-sm text-slate-900">Share Note with {group.name}</h3>
-                <button onClick={() => setIsShareNoteOpen(false)} className="text-slate-400 hover:text-slate-600">
+                <h3 id="share-note-title" className="font-bold text-sm text-slate-900">Share Note with {group.name}</h3>
+                <button 
+                  onClick={() => setIsShareNoteOpen(false)} 
+                  aria-label="Close share note modal"
+                  className="text-slate-400 hover:text-slate-600"
+                >
                   <X className="w-4 h-4" />
                 </button>
               </div>

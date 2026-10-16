@@ -37,10 +37,11 @@ export default function DocumentWorkspacePage({
   const currentDoc = 
     notes.find((n) => n.id === documentId) || 
     personalDocs.find((d) => d.id === documentId) || 
-    notes[0];
+    notes[0] ||
+    personalDocs[0];
 
-  const docTitle = 'title' in currentDoc ? currentDoc.title : (currentDoc as { name: string }).name;
-  const examPack = currentDoc.examPack;
+  const docTitle = currentDoc ? ('title' in currentDoc ? currentDoc.title : (currentDoc as { name: string }).name) : '';
+  const examPack = currentDoc?.examPack;
 
   // Workspace layout mode: split (side-by-side) | pdf (original only) | summary (ai summarize only)
   const [viewMode, setViewMode] = useState<'split' | 'pdf' | 'summary'>('split');
@@ -172,6 +173,40 @@ export default function DocumentWorkspacePage({
     }
     return false;
   })();
+
+  if (!currentDoc) {
+    return (
+      <AuthGuard>
+        <div className="min-h-screen flex flex-col bg-[#f8fafc] text-slate-900">
+          <Navbar />
+          <div className="flex-1 flex items-center justify-center p-6">
+            <div className="max-w-md w-full bg-white border border-slate-200 rounded-2xl p-8 text-center shadow-xs">
+              <FileText className="w-10 h-10 text-slate-400 mx-auto mb-3" />
+              <h1 className="text-lg font-bold text-slate-900 mb-1">Document Not Found</h1>
+              <p className="text-xs text-slate-500 mb-6 leading-relaxed">
+                This study pack is not available in your workspace or may have been deleted.
+              </p>
+              <div className="flex items-center justify-center gap-3">
+                <Link
+                  href="/dashboard"
+                  className="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-xs shadow-xs"
+                >
+                  Return to Dashboard
+                </Link>
+                <Link
+                  href="/library"
+                  className="px-4 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-xs"
+                >
+                  Browse Library
+                </Link>
+              </div>
+            </div>
+          </div>
+          <Footer />
+        </div>
+      </AuthGuard>
+    );
+  }
 
   return (
     <AuthGuard>

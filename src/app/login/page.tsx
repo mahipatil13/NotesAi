@@ -69,24 +69,25 @@ function LoginContent() {
     setLoading(true);
     setErrorMsg(null);
     try {
-      if (isSupabaseConfigured()) {
-        // Pass the redirect destination through so OAuth lands in the right place
-        const redirect = searchParams.get('redirect');
-        const base = typeof window !== 'undefined' ? window.location.origin : '';
-        const destination = redirect && redirect.startsWith('/') ? redirect : '/dashboard';
-        const { error } = await supabase.auth.signInWithOAuth({
-          provider: 'google',
-          options: {
-            redirectTo: `${base}${destination}`,
-          },
-        });
-        if (error) {
-          setErrorMsg(error.message);
-          setLoading(false);
-        }
-      } else {
-        loginUser('google.user@college.edu', 'Google Student');
-        navigateAfterLogin();
+      if (!isSupabaseConfigured()) {
+        setErrorMsg('Google sign-in requires Supabase to be configured. Please contact the admin.');
+        setLoading(false);
+        return;
+      }
+      // Redirect to /auth/callback which exchanges the OAuth code for a real session.
+      // Pass `next` so the callback knows where to send the user after auth.
+      const redirect = searchParams.get('redirect');
+      const base = typeof window !== 'undefined' ? window.location.origin : '';
+      const destination = redirect && redirect.startsWith('/') ? redirect : '/dashboard';
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${base}/auth/callback?next=${encodeURIComponent(destination)}`,
+        },
+      });
+      if (error) {
+        setErrorMsg(error.message);
+        setLoading(false);
       }
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Failed to connect to Google';
@@ -110,7 +111,7 @@ function LoginContent() {
             </div>
             <span className="font-bold text-lg text-slate-900">Smart Study</span>
           </Link>
-          <h2 className="text-xl font-bold text-slate-900 tracking-tight">Welcome back</h2>
+          <h1 className="text-xl font-bold text-slate-900 tracking-tight">Welcome back</h1>
           <p className="text-xs text-slate-500 mt-1">
             Sign in to access your personal notes and study packs.
           </p>

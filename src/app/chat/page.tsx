@@ -40,7 +40,7 @@ function ChatContent() {
     'Give me a 10-mark university answer for Zener Diode',
   ];
 
-  const handleSend = (textToSend?: string) => {
+  const handleSend = async (textToSend?: string) => {
     const text = textToSend || input;
     if (!text.trim() || isTyping) return;
 
@@ -58,63 +58,41 @@ function ChatContent() {
     setIsTyping(true);
     incrementUsage('ai');
 
-    setTimeout(() => {
-      let aiResponse = '';
-      let sources: string[] = ['Unit 3 — PN Junction Diodes.pdf, Pages 7–12'];
+    try {
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages: newMessages.map((m) => ({ role: m.role, content: m.content })),
+          mode: selectedMode,
+        }),
+      });
 
-      const lower = text.toLowerCase();
-      if (lower.includes('pn junction') || lower.includes('barrier') || lower.includes('forward bias') || lower.includes('reverse bias') || lower.includes('diode')) {
-        if (selectedMode === 'Beginner') {
-          aiResponse = `Think of a **PN junction** like a one-way security gate between two rooms:
-- In the P-room, people have empty seats (holes).
-- In the N-room, people have extra tickets (electrons).
-When they touch, electrons near the door shake hands with holes and get stuck in place. This forms a "do not cross" zone called the **Depletion Region**, creating an invisible fence of **0.7 Volts** (for Silicon).
-When you connect battery power in forward bias, you push through the fence and current floods through easily!`;
-        } else if (selectedMode === 'Exam Answer') {
-          aiResponse = `### University Examination Model Answer: PN Junction Diode Operation
-
-**1. Formation of Depletion Region & Built-in Potential ($V_0$):**
-When p-type and n-type silicon semiconductors form a metallurgical junction, the majority carrier concentration gradient triggers spontaneous diffusion. Free electrons diffuse into the p-region leaving immobile donor ions ($N_D^+$), while holes diffuse into the n-region leaving immobile acceptor ions ($N_A^-$). The resulting internal space charge electric field halts further diffusion.
-Formula:
-$$V_0 = \\frac{kT}{q} \\ln\\left(\\frac{N_A N_D}{n_i^2}\\right) \\approx 0.7\\text{ V for Si at 300K}$$
-
-**2. Forward Biasing:**
-Applying $V > V_0$ with positive terminal to P and negative to N lowers the potential barrier. Depletion width narrows, resulting in exponential current governed by the Shockley Diode Equation:
-$$I = I_s \\left(e^{qV / \\eta kT} - 1\\right)$$
-
-**3. Reverse Biasing:**
-Applying opposite polarity pulls majority carriers away, widening the depletion region. Only negligible minority saturation current ($I_0$) flows until avalanche or Zener breakdown occurs.`;
-        } else if (selectedMode === 'Last-Minute Revision') {
-          aiResponse = `⚡ **Last-Minute 4 Key Takeaways:**
-1. **Barrier Potential:** $0.7\\text{ V}$ (Silicon), $0.3\\text{ V}$ (Germanium) at $300\\text{ K}$.
-2. **Forward Bias:** P $\\rightarrow$ Positive, N $\\rightarrow$ Negative. Depletion layer narrows $\\rightarrow$ High conduction.
-3. **Reverse Bias:** P $\\rightarrow$ Negative, N $\\rightarrow$ Positive. Depletion layer widens $\\rightarrow$ Nanoscale leakage current.
-4. **Equation to write:** Shockley diode formula $I = I_s (e^{qV/\\eta kT} - 1)$.`;
-        } else {
-          aiResponse = `In semiconductor physics, a **PN Junction** creates an equilibrium between diffusion drift forces. 
-- The immobile ion cores formulate the **depletion layer**, devoid of free mobile carriers.
-- Under **forward bias**, the external electric field counteracts the built-in barrier ($0.7\\text{V}$ for Silicon), collapsing the depletion width and facilitating high majority carrier diffusion.
-- Under **reverse bias**, the applied potential adds constructively to the built-in barrier, widening the depletion region and permitting only thermally generated minority carriers to cross.`;
-        }
-      } else {
-        aiResponse = `Based on your indexed course notes, here is the syllabus-grounded breakdown for **"${text}"** under **${selectedMode}** mode:
-- The fundamental definitions and formulas were verified against your uploaded materials.
-- In semester examinations, ensure to explicitly draw schematic block diagrams and write boundary conditions to secure maximum marks.`;
-        sources = ['Data Structures — Unit 1.pdf, Page 14', 'Course Syllabus Handout'];
-      }
+      const data = await response.json();
 
       const botMessage: ChatMessage = {
         id: `bot-${crypto.randomUUID()}`,
         role: 'assistant',
-        content: aiResponse,
-        sources,
+        content: data.reply || data.error || 'Failed to generate response.',
+        sources: data.sources || ['Syllabus Guidelines'],
         timestamp: 'Just now',
         mode: selectedMode,
       };
 
       saveChat([...newMessages, botMessage]);
+    } catch {
+      const fallbackMessage: ChatMessage = {
+        id: `bot-${crypto.randomUUID()}`,
+        role: 'assistant',
+        content: 'Unable to reach the study tutor backend. Please check your network connection and verify your setup.',
+        sources: ['System Notice'],
+        timestamp: 'Just now',
+        mode: selectedMode,
+      };
+      saveChat([...newMessages, fallbackMessage]);
+    } finally {
       setIsTyping(false);
-    }, 800);
+    }
   };
 
   return (
@@ -254,6 +232,7 @@ Applying opposite polarity pulls majority carriers away, widening the depletion 
           <button
             type="submit"
             disabled={!input.trim() || isTyping}
+            aria-label="Send question"
             className={`absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-lg flex items-center justify-center transition-all ${
               input.trim() && !isTyping
                 ? 'bg-indigo-600 hover:bg-indigo-700 text-white'

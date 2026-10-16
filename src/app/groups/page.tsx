@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import AuthGuard from '@/components/AuthGuard';
@@ -42,6 +42,18 @@ export default function StudyGroupsPage() {
     setCopiedCode(code);
     setTimeout(() => setCopiedCode(null), 1500);
   };
+
+  // Accessible Escape key listener for closing modals
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setIsJoinOpen(false);
+        setIsCreateOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   const handleJoinSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -238,6 +250,7 @@ export default function StudyGroupsPage() {
                           onClick={(e) => handleCopyCode(group.inviteCode, e)}
                           className="inline-flex items-center gap-1 font-mono font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 px-2 py-0.5 rounded text-[11px] transition-colors"
                           title="Click to copy invite code"
+                          aria-label={`Copy invite code for ${group.name}`}
                         >
                           <span>{group.inviteCode}</span>
                           <Copy className="w-3 h-3 text-slate-400" />
@@ -284,16 +297,25 @@ export default function StudyGroupsPage() {
 
       {/* Modal: Join with Invite Code */}
       {isJoinOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs">
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="join-group-title"
+        >
           <div className="w-full max-w-sm bg-white border border-slate-200 rounded-2xl p-6 shadow-xl text-slate-900">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <div className="w-7 h-7 rounded-md bg-indigo-50 text-indigo-600 flex items-center justify-center">
                   <KeyRound className="w-4 h-4" />
                 </div>
-                <h3 className="font-bold text-sm text-slate-900">Enter Invite Code</h3>
+                <h3 id="join-group-title" className="font-bold text-sm text-slate-900">Enter Invite Code</h3>
               </div>
-              <button onClick={() => setIsJoinOpen(false)} className="text-slate-400 hover:text-slate-600">
+              <button 
+                onClick={() => setIsJoinOpen(false)} 
+                aria-label="Close join group modal"
+                className="text-slate-400 hover:text-slate-600"
+              >
                 <X className="w-4 h-4" />
               </button>
             </div>
@@ -348,16 +370,25 @@ export default function StudyGroupsPage() {
 
       {/* Modal: Create Study Group */}
       {isCreateOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs">
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="create-group-title"
+        >
           <div className="w-full max-w-md bg-white border border-slate-200 rounded-2xl p-6 shadow-xl text-slate-900">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <div className="w-7 h-7 rounded-md bg-indigo-50 text-indigo-600 flex items-center justify-center">
                   <Users className="w-4 h-4" />
                 </div>
-                <h3 className="font-bold text-sm text-slate-900">Create Private Study Group</h3>
+                <h3 id="create-group-title" className="font-bold text-sm text-slate-900">Create Private Study Group</h3>
               </div>
-              <button onClick={() => setIsCreateOpen(false)} className="text-slate-400 hover:text-slate-600">
+              <button 
+                onClick={() => setIsCreateOpen(false)} 
+                aria-label="Close create group modal"
+                className="text-slate-400 hover:text-slate-600"
+              >
                 <X className="w-4 h-4" />
               </button>
             </div>

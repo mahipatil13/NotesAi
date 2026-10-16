@@ -13,10 +13,29 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Smart Study — Clean & Simple AI Exam Preparation",
-  description: "Simple, distraction-free study tool for college students. Turn lecture PDFs into summaries, practice quizzes, and 10-mark answers.",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://smartstudy.app'),
+  title: {
+    default: "Smart Study | College Exam Preparation & Syllabus Notes",
+    template: "%s | Smart Study",
+  },
+  description: "Distraction-free academic study platform for engineering and college students. Convert lecture PDFs into structured 1-mark definitions, 2-mark conceptual questions, and 10-mark university answers with page citations.",
+  keywords: ["engineering notes", "exam preparation", "semester syllabus", "university question bank", "lecture summary", "college study packs"],
+  authors: [{ name: "Smart Study Academic Community" }],
+  openGraph: {
+    title: "Smart Study | College Exam Preparation & Syllabus Notes",
+    description: "Convert lecture PDFs into structured 1-mark definitions, 2-mark conceptual questions, and 10-mark university model answers.",
+    url: "https://smartstudy.app",
+    siteName: "Smart Study",
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Smart Study | College Exam Preparation & Syllabus Notes",
+    description: "Structured syllabus exam preparation grounded in real lecture PDFs with exact page citations.",
+  },
   icons: {
-    icon: "/favicon.ico",
+    icon: "/icon.svg",
   },
 };
 

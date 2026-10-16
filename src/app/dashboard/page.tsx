@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import AuthGuard from '@/components/AuthGuard';
@@ -87,6 +87,21 @@ export default function DashboardPage() {
     setTimeout(() => setStreakClaimMessage(null), 3000);
   };
 
+  // Accessible Escape key listener for closing modals
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setIsAddTodoOpen(false);
+        setIsNewSubjectOpen(false);
+        if (!isProcessing) {
+          setIsUploadModalOpen(false);
+        }
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isProcessing]);
+
   // Add todo handler
   const handleCreateTodo = (e: React.FormEvent) => {
     e.preventDefault();
@@ -128,6 +143,11 @@ export default function DashboardPage() {
 
     if (!isPdfOrDoc) {
       setUploadError('Please select a PDF document (or .txt, .docx, .md file).');
+      return;
+    }
+
+    if (file.size > 30 * 1024 * 1024) {
+      setUploadError('File exceeds the 30MB limit. Please upload a smaller document.');
       return;
     }
 
@@ -626,12 +646,18 @@ export default function DashboardPage() {
 
       {/* Add Study Task Modal */}
       {isAddTodoOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs animate-in fade-in">
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs animate-in fade-in"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="add-todo-title"
+        >
           <div className="relative w-full max-w-md bg-white border border-slate-200 rounded-2xl shadow-xl p-5 text-slate-900">
             <div className="flex items-center justify-between mb-3 pb-2 border-b border-slate-100">
-              <h3 className="font-bold text-sm text-slate-900">Add Study Target</h3>
+              <h3 id="add-todo-title" className="font-bold text-sm text-slate-900">Add Study Target</h3>
               <button
                 onClick={() => setIsAddTodoOpen(false)}
+                aria-label="Close study target modal"
                 className="w-7 h-7 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 flex items-center justify-center"
               >
                 <X className="w-4 h-4" />
@@ -713,12 +739,18 @@ export default function DashboardPage() {
 
       {/* New Subject Modal */}
       {isNewSubjectOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs animate-in fade-in">
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs animate-in fade-in"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="create-subject-title"
+        >
           <div className="relative w-full max-w-md bg-white border border-slate-200 rounded-2xl shadow-xl p-5 text-slate-900">
             <div className="flex items-center justify-between mb-3 pb-2 border-b border-slate-100">
-              <h3 className="font-bold text-sm text-slate-900">Create New Subject</h3>
+              <h3 id="create-subject-title" className="font-bold text-sm text-slate-900">Create New Subject</h3>
               <button
                 onClick={() => setIsNewSubjectOpen(false)}
+                aria-label="Close create subject modal"
                 className="w-7 h-7 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 flex items-center justify-center"
               >
                 <X className="w-4 h-4" />
@@ -795,7 +827,12 @@ export default function DashboardPage() {
 
       {/* Upload Notes Modal (Clean on-demand popup) */}
       {isUploadModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs animate-in fade-in">
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs animate-in fade-in"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="upload-modal-title"
+        >
           <div className="relative w-full max-w-lg bg-white border border-slate-200 rounded-2xl shadow-xl p-6 text-slate-900 space-y-4">
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
               <div className="flex items-center gap-2">
@@ -803,7 +840,7 @@ export default function DashboardPage() {
                   <Upload className="w-4 h-4" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-sm text-slate-900">Upload PDF & Compile Exam Pack</h3>
+                  <h3 id="upload-modal-title" className="font-bold text-sm text-slate-900">Upload PDF & Compile Exam Pack</h3>
                   <p className="text-[11px] text-slate-500">Auto-generates summaries, definitions & questions</p>
                 </div>
               </div>
@@ -814,6 +851,7 @@ export default function DashboardPage() {
                   setUploadSuccessDoc(null);
                   setUploadError('');
                 }}
+                aria-label="Close upload modal"
                 className="w-7 h-7 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 flex items-center justify-center"
               >
                 <X className="w-4 h-4" />
@@ -839,7 +877,7 @@ export default function DashboardPage() {
                   <h4 className="font-bold text-sm text-indigo-900">{processingStep}</h4>
                   <p className="text-xs text-indigo-600 mt-0.5">Please wait while AI indexes your document...</p>
                 </div>
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-white rounded-md border border-indigo-100 text-[11px] text-slate-600 font-mono max-w-sm truncate">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-white rounded-md border border-indigo-100 text-[11px] text-slate-700 font-medium max-w-sm truncate">
                   <FileText className="w-3 h-3 text-indigo-500 shrink-0" />
                   <span className="truncate">{uploadedFileName}</span>
                 </div>
@@ -877,7 +915,7 @@ export default function DashboardPage() {
                     <FileCheck className="w-4 h-4 text-indigo-600 shrink-0" />
                     <span className="font-semibold text-slate-900 truncate">{stagedFile.name}</span>
                   </div>
-                  <span className="text-slate-500 shrink-0 font-mono">
+                  <span className="text-slate-500 shrink-0 font-medium text-xs">
                     {(stagedFile.size / (1024 * 1024)).toFixed(2)} MB
                   </span>
                 </div>

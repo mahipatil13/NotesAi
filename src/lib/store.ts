@@ -113,7 +113,7 @@ const DEFAULT_CHAT_MESSAGES: ChatMessage[] = [
   {
     id: 'chat-1',
     role: 'assistant',
-    content: 'Hello! I am your Smart Study AI assistant. Upload a PDF note to get started — I will generate summaries, exam questions, and key formulas from it!',
+    content: 'Hello! I am your NotePilot AI assistant. Upload a PDF note to get started — I will generate summaries, exam questions, and key formulas from it!',
     timestamp: 'Just now',
   },
 ];
@@ -130,7 +130,7 @@ export function useSmartStudyStore() {
   const [personalDocs, setPersonalDocs] = useState<PersonalDocument[]>(DEFAULT_PERSONAL_DOCS);
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>(DEFAULT_CHAT_MESSAGES);
   const [studyGroups, setStudyGroups] = useState<StudyGroup[]>(INITIAL_STUDY_GROUPS);
-  const [usage, setUsage] = useState({ docsCount: 2, maxDocs: 3, aiCount: 4, maxAi: 5, plan: 'Free Plan' });
+  const [usage, setUsage] = useState({ docsCount: 0, maxDocs: 3, aiCount: 0, maxAi: 5, plan: 'Free Plan' });
   const [isLoaded, setIsLoaded] = useState(false);
 
   // Load from localStorage on mount
@@ -325,23 +325,31 @@ export function useSmartStudyStore() {
   }, []);
 
   // Supabase Auth session listener
-  // IMPORTANT: We only use Supabase to validate an *already-initiated* login (i.e., after the user
-  // explicitly clicked "Sign In"). We do NOT auto-restore an ambient Supabase session on page load,
-  // because that would log in whoever has a saved browser session (e.g., the developer's own Google
-  // account). Instead, we only listen for auth state changes that happen *during* the current session.
+  // Handles both email/password logins AND OAuth (Google) logins where the user
+  // arrives back at /auth/callback with a fresh session — no locally stored email beforehand.
   useEffect(() => {
     if (typeof window === 'undefined') return;
     if (!isSupabaseConfigured()) return;
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      // Only act on explicit sign-in / sign-out events, not on passive INITIAL_SESSION restoration
-      if (event === 'SIGNED_IN' && session?.user) {
+      if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session?.user) {
+        const userEmail = session.user.email || '';
+        if (!userEmail) return;
+
+        // Check if we already have this user stored and synced to avoid redundant updates
         const storedUser = localStorage.getItem(STORAGE_KEYS.USER);
-        const storedEmail = storedUser ? JSON.parse(storedUser)?.email : '';
-        // Only sync Supabase user if the stored local user matches (i.e., same login flow)
-        if (storedEmail && storedEmail.toLowerCase() === session.user.email?.toLowerCase()) {
-          const userEmail = session.user.email || '';
-          const userName = session.user.user_metadata?.full_name || userEmail.split('@')[0] || 'Student';
+        const storedParsed = storedUser ? JSON.parse(storedUser) : null;
+        const alreadySynced =
+          storedParsed?.isLoggedIn &&
+          storedParsed?.email?.toLowerCase() === userEmail.toLowerCase() &&
+          storedParsed?.id === session.user.id;
+
+        if (!alreadySynced) {
+          const userName =
+            session.user.user_metadata?.full_name ||
+            session.user.user_metadata?.name ||
+            userEmail.split('@')[0] ||
+            'Student';
           const role = isSuperadminEmail(userEmail) ? 'superadmin' : 'student';
           const u: User = {
             id: session.user.id,
@@ -354,11 +362,13 @@ export function useSmartStudyStore() {
           loadUserScopedData(userEmail);
         }
       } else if (event === 'SIGNED_OUT') {
-        // Only clear if there's no manual local session active
-        const storedUser = localStorage.getItem(STORAGE_KEYS.USER);
-        if (!storedUser || !JSON.parse(storedUser)?.isLoggedIn) {
-          setUser(DEFAULT_USER);
-        }
+        setUser(DEFAULT_USER);
+        setTodos(DEFAULT_TODOS);
+        setPersonalSubjects(DEFAULT_PERSONAL_SUBJECTS);
+        setPersonalDocs(DEFAULT_PERSONAL_DOCS);
+        setChatMessages(DEFAULT_CHAT_MESSAGES);
+        setStreak(DEFAULT_STREAK);
+        setUsage({ docsCount: 0, maxDocs: 3, aiCount: 0, maxAi: 5, plan: 'Free Plan' });
       }
     });
 
