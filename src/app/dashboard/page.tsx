@@ -18,7 +18,6 @@ import {
   AlertCircle,
   CheckCircle2,
   FileCheck,
-  ArrowRight,
   Flame,
   CheckSquare,
   Square,
@@ -281,30 +280,21 @@ export default function DashboardPage() {
         {/* Welcome Banner */}
         <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <div className="flex items-center gap-2 mb-1">
-              <span className="text-xs font-semibold text-indigo-600 bg-indigo-50 px-2.5 py-0.5 rounded-full border border-indigo-100">
-                Academic Workspace
-              </span>
-              <span className="inline-flex items-center gap-1 text-xs font-bold text-amber-700 bg-amber-50 px-2.5 py-0.5 rounded-full border border-amber-200">
-                <Flame className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
-                <span>{streak.currentStreak} Day Streak</span>
-              </span>
-              {user.role === 'superadmin' && (
-                <Link
-                  href="/admin"
-                  className="inline-flex items-center gap-1 text-[11px] font-bold text-amber-700 bg-amber-100 hover:bg-amber-200 px-2 py-0.5 rounded-full transition-colors"
-                >
-                  <ShieldCheck className="w-3 h-3 text-amber-600" />
-                  <span>Superadmin Portal</span>
-                </Link>
-              )}
-            </div>
             <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
               Welcome back, {user.name.split(' ')[0]}
             </h1>
             <p className="text-xs sm:text-sm text-slate-500 mt-1 max-w-2xl">
-              Focus on your semester targets. Track your daily study habits, manage your exam to-do list, and review your subjects.
+              Track your daily study habits, manage your exam to-do list, and review your subjects.
             </p>
+            {user.role === 'superadmin' && (
+              <Link
+                href="/admin"
+                className="inline-flex items-center gap-1 text-[11px] font-semibold text-amber-400 bg-amber-950/50 hover:bg-amber-950/70 px-2.5 py-1 rounded border border-amber-800/40 mt-2 transition-colors"
+              >
+                <ShieldCheck className="w-3 h-3" />
+                <span>Admin console</span>
+              </Link>
+            )}
           </div>
 
           <div className="flex items-center gap-2.5 shrink-0">
@@ -378,17 +368,16 @@ export default function DashboardPage() {
                 </div>
               </div>
 
-              {/* Big Streak Display */}
-              <div className="my-4 p-4 rounded-xl bg-linear-to-br from-amber-50 via-orange-50 to-white border border-amber-200 text-center">
+              <div className="my-4 p-4 rounded-lg border border-amber-800/30 bg-amber-950/20 text-center">
                 <div className="inline-flex items-center justify-center gap-2">
-                  <Flame className="w-7 h-7 text-amber-500 fill-amber-500 animate-pulse" />
-                  <span className="text-3xl font-extrabold text-amber-900">{streak.currentStreak}</span>
-                  <span className="text-sm font-semibold text-amber-800">Days Active</span>
+                  <Flame className="w-7 h-7 text-amber-500 fill-amber-500" />
+                  <span className="text-3xl font-extrabold text-amber-400">{streak.currentStreak}</span>
+                  <span className="text-sm font-medium text-amber-600">days active</span>
                 </div>
-                <p className="text-[11px] text-amber-700 mt-1 font-medium">
+                <p className="text-[11px] text-amber-600/80 mt-1">
                   {streak.currentStreak >= 7 
-                    ? "Incredible dedication. You've achieved your weekly study badge." 
-                    : `Only ${7 - (streak.currentStreak % 7)} days to your next consistency badge.`
+                    ? "Weekly study badge earned."
+                    : `${7 - (streak.currentStreak % 7)} days to your next consistency badge.`
                   }
                 </p>
               </div>
@@ -418,7 +407,7 @@ export default function DashboardPage() {
                           {isActive ? (
                             <Check className="w-3 h-3 text-amber-600 stroke-[3]" />
                           ) : day.isToday ? (
-                            <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse"></span>
+                            <span className="w-1.5 h-1.5 rounded-full bg-[#4f8ef7]"></span>
                           ) : (
                             <span className="w-1.5 h-1.5 rounded-full bg-slate-200"></span>
                           )}
@@ -647,7 +636,7 @@ export default function DashboardPage() {
       {/* Add Study Task Modal */}
       {isAddTodoOpen && (
         <div 
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs animate-in fade-in"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#0a1628]/60 backdrop-blur-sm"
           role="dialog"
           aria-modal="true"
           aria-labelledby="add-todo-title"
@@ -740,7 +729,7 @@ export default function DashboardPage() {
       {/* New Subject Modal */}
       {isNewSubjectOpen && (
         <div 
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs animate-in fade-in"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#0a1628]/60 backdrop-blur-sm"
           role="dialog"
           aria-modal="true"
           aria-labelledby="create-subject-title"
@@ -828,7 +817,7 @@ export default function DashboardPage() {
       {/* Upload Notes Modal (Clean on-demand popup) */}
       {isUploadModalOpen && (
         <div 
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs animate-in fade-in"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#0a1628]/60 backdrop-blur-sm"
           role="dialog"
           aria-modal="true"
           aria-labelledby="upload-modal-title"
@@ -871,40 +860,39 @@ export default function DashboardPage() {
             />
 
             {isProcessing ? (
-              <div className="py-8 px-4 text-center space-y-3 bg-indigo-50/70 rounded-xl border border-indigo-200">
-                <div className="w-8 h-8 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
+              <div className="py-8 px-4 text-center space-y-3 bg-[#0d1c30] rounded-lg border border-white/8">
+                <div className="w-7 h-7 border-2 border-[#3b6fd4] border-t-transparent rounded-full animate-spin mx-auto"></div>
                 <div>
-                  <h4 className="font-bold text-sm text-indigo-900">{processingStep}</h4>
-                  <p className="text-xs text-indigo-600 mt-0.5">Please wait while AI indexes your document...</p>
+                  <h4 className="font-semibold text-sm text-slate-200">{processingStep}</h4>
+                  <p className="text-xs text-slate-500 mt-0.5">Indexing your document…</p>
                 </div>
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-white rounded-md border border-indigo-100 text-[11px] text-slate-700 font-medium max-w-sm truncate">
-                  <FileText className="w-3 h-3 text-indigo-500 shrink-0" />
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#111f35] rounded border border-white/8 text-[11px] text-slate-400 max-w-sm truncate">
+                  <FileText className="w-3 h-3 text-[#4f8ef7] shrink-0" />
                   <span className="truncate">{uploadedFileName}</span>
                 </div>
               </div>
             ) : uploadSuccessDoc ? (
-              <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 space-y-3">
+              <div className="p-4 rounded-lg bg-emerald-950/30 border border-emerald-800/40 space-y-3">
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-5 h-5 text-emerald-600" />
+                  <CheckCircle2 className="w-5 h-5 text-emerald-500" />
                   <div>
-                    <h4 className="text-sm font-bold text-emerald-950">Upload Successful!</h4>
-                    <p className="text-xs text-emerald-700">Exam Pack generated and ready in workspace.</p>
+                    <h4 className="text-sm font-semibold text-emerald-300">Upload complete</h4>
+                    <p className="text-xs text-emerald-600">Exam pack generated and ready.</p>
                   </div>
                 </div>
 
                 <div className="pt-2 flex items-center justify-end gap-2">
                   <Link
                     href={`/notes/${uploadSuccessDoc.id}`}
-                    className="inline-flex items-center gap-1 px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-xs"
+                    className="inline-flex items-center gap-1 px-4 py-2 rounded-md bg-[#3b6fd4] hover:bg-[#4a7fe8] text-white font-semibold text-xs transition-colors"
                   >
-                    <span>Open in Document Workspace</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
+                    <span>Open document</span>
                   </Link>
                   <button
                     onClick={() => setUploadSuccessDoc(null)}
-                    className="px-3 py-2 rounded-lg border border-slate-200 bg-white text-slate-700 font-medium text-xs hover:bg-slate-50"
+                    className="px-3 py-2 rounded-md border border-white/10 text-slate-400 font-medium text-xs hover:text-slate-200 hover:border-white/20 transition-colors"
                   >
-                    Upload Another
+                    Upload another
                   </button>
                 </div>
               </div>
