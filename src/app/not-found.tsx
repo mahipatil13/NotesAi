@@ -9,8 +9,7 @@ export default function NotFound() {
         <div className="w-12 h-12 rounded-xl bg-indigo-50 border border-indigo-200 text-indigo-600 flex items-center justify-center mx-auto mb-4">
           <BookOpen className="w-6 h-6" />
         </div>
-        <span className="text-xs font-semibold text-indigo-600 uppercase tracking-wide">404 Error</span>
-        <h1 className="text-xl font-bold text-slate-900 mt-1 mb-2">Page or Note Not Found</h1>
+        <h1 className="text-xl font-bold text-slate-900 mb-2">Page not found</h1>
         <p className="text-sm text-slate-600 mb-6 leading-relaxed">
           The study material, semester unit, or page you are looking for does not exist or has been moved.
         </p>
