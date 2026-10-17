@@ -8,11 +8,8 @@ import Footer from '@/components/Footer';
 import { 
   GraduationCap, 
   BookOpen, 
-  LayoutDashboard, 
-  ArrowRight,
+  LayoutDashboard,
   FileText,
-  CheckCircle2,
-  FileCode2
 } from 'lucide-react';
 import { useSmartStudyStore } from '@/lib/store';
 
@@ -21,7 +18,6 @@ export default function HomePage() {
   const router = useRouter();
   const [activePreviewTab, setActivePreviewTab] = useState<'1mark' | '2mark' | '10mark'>('1mark');
 
-  // Redirect logged-in users straight to dashboard
   useEffect(() => {
     if (isLoaded && user.isLoggedIn) {
       router.replace('/dashboard');
@@ -34,11 +30,10 @@ export default function HomePage() {
     ).length;
   };
 
-  // Loading state
   if (!isLoaded) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-[#f8fafc]">
-        <div className="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-xs">
+      <div className="min-h-screen flex items-center justify-center bg-[#0a1628]">
+        <div className="w-9 h-9 rounded-md bg-[#3b6fd4] flex items-center justify-center text-white">
           <GraduationCap className="w-5 h-5" />
         </div>
       </div>
@@ -49,170 +44,130 @@ export default function HomePage() {
     <div className="landing-theme min-h-screen flex flex-col">
       <Navbar />
 
-      {/* Hero Section */}
-      <section className="pt-14 pb-12 md:pt-18 md:pb-16 border-b border-slate-200 bg-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
-          
-          {/* Academic Badge */}
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-slate-700 text-xs font-medium mb-6">
-            <GraduationCap className="w-4 h-4 text-indigo-600" />
-            <span>
-              {user.name && user.name !== 'Student' && user.name !== 'Guest User'
-                ? `Welcome, ${user.name.split(' ')[0]} | Your study workspace`
-                : 'Syllabus-Aligned University Exam Preparation'}
-            </span>
-          </div>
+      {/* Hero */}
+      <section className="pt-16 pb-14 border-b border-white/8">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6">
 
-          {/* Heading */}
-          <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-slate-900 leading-[1.15] mb-5">
-            Master your syllabus.{' '}
-            <span className="text-indigo-600">
-              Turn lecture notes into university exam study packs.
-            </span>
+          <h1 className="text-3xl sm:text-[2.6rem] font-bold text-slate-100 leading-[1.18] mb-5 tracking-tight">
+            Upload your lecture notes.<br />
+            Get a ready-to-revise exam pack.
           </h1>
 
-          {/* Subtitle */}
-          <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto mb-8 leading-relaxed">
-            Upload lecture notes and get structured <strong>1-mark definitions, 2-mark conceptual differentiations</strong>, and complete <strong>10-mark long answers</strong>, cited directly with original document page numbers.
+          <p className="text-base text-slate-400 max-w-xl mb-8 leading-relaxed">
+            Paste or upload a PDF from your semester syllabus. Smart Study generates 1-mark definitions, 2-mark differentiations, and 10-mark model answers — each one cited to the exact page in your document.
           </p>
 
-          {/* Action Navigation */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 max-w-sm mx-auto mb-10">
+          <div className="flex flex-col sm:flex-row items-start gap-3 mb-12">
             <Link
               href="/dashboard"
-              className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-sm shadow-xs transition-all"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-md bg-[#3b6fd4] hover:bg-[#4a7fe8] text-white font-medium text-sm transition-colors"
             >
               <LayoutDashboard className="w-4 h-4" />
-              <span>Go to Workspace</span>
+              Open workspace
             </Link>
             <Link
               href="/library"
-              className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-medium text-sm transition-all"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-md border border-white/12 text-slate-300 hover:text-slate-100 hover:border-white/22 font-medium text-sm transition-colors"
             >
-              <BookOpen className="w-4 h-4 text-slate-500" />
-              <span>Browse Public Library</span>
+              <BookOpen className="w-4 h-4" />
+              Browse public library
             </Link>
           </div>
 
-          {/* Live Academic Exam Pack Preview (Tangible demonstration instead of generic AI boxes) */}
-          <div className="max-w-3xl mx-auto text-left bg-white border border-slate-200 rounded-2xl shadow-xs overflow-hidden">
-            <div className="bg-slate-50/90 border-b border-slate-200 px-4 py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          {/* Exam Pack Preview — the most characteristic thing about this product */}
+          <div className="bg-[#111f35] border border-white/8 rounded-lg overflow-hidden">
+            <div className="bg-[#0d1c30] border-b border-white/8 px-4 py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
               <div className="flex items-center gap-2">
-                <FileText className="w-4 h-4 text-indigo-600" />
-                <span className="text-xs font-bold text-slate-900">
-                  Sample Exam Pack: Data Structures (CS302) &bull; Unit 3 Trees
+                <FileText className="w-4 h-4 text-[#4f8ef7]" />
+                <span className="text-xs font-semibold text-slate-200">
+                  Data Structures — CS302, Unit 3: Trees
                 </span>
               </div>
               <div className="flex items-center gap-1">
-                <button
-                  onClick={() => setActivePreviewTab('1mark')}
-                  className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-all ${
-                    activePreviewTab === '1mark'
-                      ? 'bg-indigo-600 text-white shadow-xs'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200'
-                  }`}
-                >
-                  1-Mark Format
-                </button>
-                <button
-                  onClick={() => setActivePreviewTab('2mark')}
-                  className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-all ${
-                    activePreviewTab === '2mark'
-                      ? 'bg-indigo-600 text-white shadow-xs'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200'
-                  }`}
-                >
-                  2-Mark Format
-                </button>
-                <button
-                  onClick={() => setActivePreviewTab('10mark')}
-                  className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-all ${
-                    activePreviewTab === '10mark'
-                      ? 'bg-indigo-600 text-white shadow-xs'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200'
-                  }`}
-                >
-                  10-Mark Model Answer
-                </button>
+                {(['1mark', '2mark', '10mark'] as const).map((tab) => (
+                  <button
+                    key={tab}
+                    onClick={() => setActivePreviewTab(tab)}
+                    className={`px-2.5 py-1 rounded text-xs font-medium transition-colors ${
+                      activePreviewTab === tab
+                        ? 'bg-[#3b6fd4] text-white'
+                        : 'text-slate-400 hover:text-slate-200 hover:bg-white/6'
+                    }`}
+                  >
+                    {tab === '1mark' ? '1-mark' : tab === '2mark' ? '2-mark' : '10-mark'}
+                  </button>
+                ))}
               </div>
             </div>
 
-            <div className="p-5 text-xs text-slate-800 space-y-3">
+            <div className="p-5 text-xs text-slate-300 space-y-3">
               {activePreviewTab === '1mark' && (
-                <div className="space-y-3">
-                  <div className="flex items-start justify-between gap-3 pb-3 border-b border-slate-100">
+                <div className="space-y-4">
+                  <div className="flex items-start justify-between gap-4 pb-3 border-b border-white/6">
                     <div>
-                      <p className="font-bold text-slate-900 mb-1">Q1: State the balance factor condition of an AVL tree.</p>
-                      <p className="text-slate-600 leading-relaxed">
-                        Answer: The balance factor $BF(T) = h(T_L) - h(T_R)$ for every node in the tree must strictly equal -1, 0, or +1.
+                      <p className="font-semibold text-slate-100 mb-1">Q1 — State the balance factor condition of an AVL tree.</p>
+                      <p className="text-slate-400 leading-relaxed">
+                        The balance factor BF(T) = h(T_L) − h(T_R) for every node must equal −1, 0, or +1.
                       </p>
                     </div>
-                    <span className="shrink-0 text-[11px] font-medium text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-100">
-                      Page 12
+                    <span className="shrink-0 text-[11px] font-medium text-[#4f8ef7] bg-[#1a2e4a] px-2 py-0.5 rounded">
+                      p. 12
                     </span>
                   </div>
-                  <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-start justify-between gap-4">
                     <div>
-                      <p className="font-bold text-slate-900 mb-1">Q2: What is the worst-case search complexity in an unbalanced BST vs AVL?</p>
-                      <p className="text-slate-600 leading-relaxed">
-                        Answer: Unbalanced BST degrades to $O(n)$ for skewed insertions, while AVL tree guarantees $O(\log n)$ through rotations.
+                      <p className="font-semibold text-slate-100 mb-1">Q2 — Worst-case search complexity: unbalanced BST vs AVL.</p>
+                      <p className="text-slate-400 leading-relaxed">
+                        Unbalanced BST degrades to O(n) for skewed insertions; AVL guarantees O(log n) through rotations.
                       </p>
                     </div>
-                    <span className="shrink-0 text-[11px] font-medium text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-100">
-                      Page 15
+                    <span className="shrink-0 text-[11px] font-medium text-[#4f8ef7] bg-[#1a2e4a] px-2 py-0.5 rounded">
+                      p. 15
                     </span>
                   </div>
                 </div>
               )}
 
               {activePreviewTab === '2mark' && (
-                <div className="space-y-3">
-                  <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
-                    <div className="flex items-start justify-between gap-2">
-                      <p className="font-bold text-slate-900">
-                        Q: Differentiate between B-Tree and B+ Tree internal node structures.
-                      </p>
-                      <span className="shrink-0 text-[11px] font-medium text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-100">
-                        Page 19
-                      </span>
+                <div>
+                  <div className="flex items-start justify-between gap-3 mb-3">
+                    <p className="font-semibold text-slate-100">
+                      Q — Differentiate between B-Tree and B+ Tree internal node structures.
+                    </p>
+                    <span className="shrink-0 text-[11px] font-medium text-[#4f8ef7] bg-[#1a2e4a] px-2 py-0.5 rounded">
+                      p. 19
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-slate-400">
+                    <div className="p-3 border-l-2 border-[#3b6fd4] bg-[#0d1c30]">
+                      <span className="font-semibold text-slate-200 block mb-1">B-Tree</span>
+                      Stores search keys with record data pointers in all internal and leaf nodes.
                     </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px] text-slate-700 pt-1">
-                      <div className="p-2 rounded bg-white border border-slate-200">
-                        <span className="font-bold block text-slate-900 mb-0.5">B-Tree:</span>
-                        Stores search keys along with actual record data pointers in all internal and leaf nodes.
-                      </div>
-                      <div className="p-2 rounded bg-white border border-slate-200">
-                        <span className="font-bold block text-slate-900 mb-0.5">B+ Tree:</span>
-                        Internal nodes only contain indexing guide keys; all actual records are stored in linked sequential leaves.
-                      </div>
+                    <div className="p-3 border-l-2 border-[#3b6fd4] bg-[#0d1c30]">
+                      <span className="font-semibold text-slate-200 block mb-1">B+ Tree</span>
+                      Internal nodes hold only guide keys; all record data lives in linked sequential leaves.
                     </div>
                   </div>
                 </div>
               )}
 
               {activePreviewTab === '10mark' && (
-                <div className="space-y-3">
-                  <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
-                    <div className="flex items-start justify-between gap-2">
-                      <div>
-                        <p className="font-bold text-slate-900 text-sm">
-                          Q: Explain the four AVL rotation algorithms with balance factor criteria and step-by-step tree transformations.
-                        </p>
-                      </div>
-                      <span className="shrink-0 text-[11px] font-medium text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-100">
-                        Pages 13–16
-                      </span>
-                    </div>
-                    <div className="text-[11px] text-slate-600 space-y-1.5 pt-1">
-                      <p className="font-semibold text-slate-800">University Model Answer Blueprint:</p>
-                      <ul className="list-disc pl-4 space-y-1">
-                        <li><strong>1. Identification Criteria:</strong> Left-Left (LL), Right-Right (RR), Left-Right (LR), Right-Left (RL) violations.</li>
-                        <li><strong>2. Single Rotations:</strong> Clockwise rotation around pivot for LL; Counter-clockwise for RR.</li>
-                        <li><strong>3. Double Rotations:</strong> Two-phase rotation strategy for zig-zag imbalances (LR and RL).</li>
-                        <li><strong>4. Evaluation Diagram:</strong> Before-and-after tree topology with recalculated balance factors.</li>
-                      </ul>
-                    </div>
+                <div>
+                  <div className="flex items-start justify-between gap-3 mb-3">
+                    <p className="font-semibold text-slate-100">
+                      Q — Explain the four AVL rotation algorithms with balance factor criteria and step-by-step transformations.
+                    </p>
+                    <span className="shrink-0 text-[11px] font-medium text-[#4f8ef7] bg-[#1a2e4a] px-2 py-0.5 rounded">
+                      pp. 13–16
+                    </span>
                   </div>
+                  <p className="font-medium text-slate-200 mb-2">Model answer outline:</p>
+                  <ul className="text-slate-400 space-y-1.5 pl-3">
+                    <li className="flex gap-2"><span className="text-slate-600 shrink-0">1.</span> Identify the violation type: LL, RR, LR, or RL.</li>
+                    <li className="flex gap-2"><span className="text-slate-600 shrink-0">2.</span> Single rotations — clockwise for LL, counter-clockwise for RR.</li>
+                    <li className="flex gap-2"><span className="text-slate-600 shrink-0">3.</span> Double rotations for zig-zag patterns (LR and RL).</li>
+                    <li className="flex gap-2"><span className="text-slate-600 shrink-0">4.</span> Before-and-after topology with recalculated balance factors.</li>
+                  </ul>
                 </div>
               )}
             </div>
@@ -221,51 +176,47 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Community Library Section */}
-      <section className="py-14 bg-white border-b border-slate-200">
+      {/* Department Library */}
+      <section className="py-14 border-b border-white/8">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8">
+          <div className="flex items-end justify-between mb-7">
             <div>
-              <p className="text-xs font-semibold text-indigo-600 mb-1">
-                Open Community Notes
-              </p>
-              <h2 className="text-xl sm:text-2xl font-bold text-slate-900">
-                Browse by Department & Semester
+              <h2 className="text-lg font-semibold text-slate-100">
+                Notes by department
               </h2>
-              <p className="text-slate-500 text-xs sm:text-sm mt-1">
-                Access verified notes uploaded by students across engineering branches.
+              <p className="text-slate-500 text-sm mt-0.5">
+                Student-contributed, verified lecture materials.
               </p>
             </div>
             <Link
               href="/library"
-              className="mt-3 sm:mt-0 text-xs font-semibold text-indigo-600 hover:text-indigo-800 flex items-center gap-1"
+              className="text-xs font-medium text-[#4f8ef7] hover:text-[#7db0fa] transition-colors"
             >
-              <span>View full library</span>
-              <ArrowRight className="w-3.5 h-3.5" />
+              View all
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
             {departments.map((dept) => {
               const count = getDeptNoteCount(dept.id);
               return (
                 <Link
                   key={dept.id}
                   href={`/library?dept=${dept.id}`}
-                  className="p-4 rounded-xl border border-slate-200 hover:border-slate-300 hover:bg-slate-50/60 transition-all bg-white shadow-2xs"
+                  className="p-4 border border-white/7 bg-[#111f35] hover:border-[#3b6fd4]/40 transition-colors rounded-sm"
                 >
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded">
+                    <span className="text-xs font-bold text-[#4f8ef7]">
                       {dept.code}
                     </span>
-                    <span className="text-[11px] text-slate-500 font-medium">
+                    <span className="text-[11px] text-slate-500">
                       {count === 1 ? '1 note' : `${count} notes`}
                     </span>
                   </div>
-                  <h3 className="font-semibold text-sm text-slate-900 mb-1">
+                  <h3 className="font-medium text-sm text-slate-200 mb-1 leading-snug">
                     {dept.name}
                   </h3>
-                  <p className="text-xs text-slate-500 line-clamp-2">
+                  <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed">
                     {dept.description}
                   </p>
                 </Link>
@@ -275,40 +226,56 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Academic Alignment Section */}
+      {/* How it fits university marking */}
       <section className="py-14 max-w-6xl mx-auto px-4 sm:px-6">
-        <div className="text-center max-w-2xl mx-auto mb-10">
-          <h2 className="text-2xl font-bold text-slate-900 mb-2">
-            Structured for University Marking Schemes
-          </h2>
-          <p className="text-slate-500 text-sm">
-            Designed to match how university professors grade semester examination papers.
-          </p>
-        </div>
+        <h2 className="text-lg font-semibold text-slate-100 mb-1">
+          Structured for university marking schemes
+        </h2>
+        <p className="text-slate-500 text-sm mb-8">
+          Answers are generated to match how professors allocate marks in semester papers.
+        </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-          <div className="p-5 rounded-xl border border-slate-200 bg-white shadow-2xs space-y-2">
-            <CheckCircle2 className="w-5 h-5 text-indigo-600" />
-            <h3 className="font-bold text-sm text-slate-900">Mark-Tiered Questions</h3>
-            <p className="text-xs text-slate-600 leading-relaxed">
-              Provides concise 1-mark definitions, 2-mark differences, and comprehensive 10-mark step-by-step long answers.
-            </p>
+        {/* Table-row layout instead of identical card grid */}
+        <div className="border border-white/7 rounded-sm overflow-hidden">
+          <div className="grid grid-cols-[1fr_2fr] border-b border-white/7">
+            <div className="p-4 border-r border-white/7 bg-[#111f35]">
+              <p className="text-sm font-semibold text-slate-100">1-mark and 2-mark questions</p>
+            </div>
+            <div className="p-4 bg-[#0d1c30]">
+              <p className="text-sm text-slate-400 leading-relaxed">
+                Definitions, single-line answers, and paired differentiations — formatted for short-answer sections where every word is marked.
+              </p>
+            </div>
           </div>
-
-          <div className="p-5 rounded-xl border border-slate-200 bg-white shadow-2xs space-y-2">
-            <BookOpen className="w-5 h-5 text-indigo-600" />
-            <h3 className="font-bold text-sm text-slate-900">Syllabus-Indexed Library</h3>
-            <p className="text-xs text-slate-600 leading-relaxed">
-              Find and contribute lecture materials structured strictly by Department, Semester, and Subject code.
-            </p>
+          <div className="grid grid-cols-[1fr_2fr] border-b border-white/7">
+            <div className="p-4 border-r border-white/7 bg-[#111f35]">
+              <p className="text-sm font-semibold text-slate-100">10-mark model answers</p>
+            </div>
+            <div className="p-4 bg-[#0d1c30]">
+              <p className="text-sm text-slate-400 leading-relaxed">
+                Structured outlines with numbered points, covering every sub-topic a university blueprint expects.
+              </p>
+            </div>
           </div>
-
-          <div className="p-5 rounded-xl border border-slate-200 bg-white shadow-2xs space-y-2">
-            <FileCode2 className="w-5 h-5 text-indigo-600" />
-            <h3 className="font-bold text-sm text-slate-900">Verifiable Page Citations</h3>
-            <p className="text-xs text-slate-600 leading-relaxed">
-              Every summary point, formula, and question maps to the exact page number in your original lecture document.
-            </p>
+          <div className="grid grid-cols-[1fr_2fr] border-b border-white/7">
+            <div className="p-4 border-r border-white/7 bg-[#111f35]">
+              <p className="text-sm font-semibold text-slate-100">Page citations</p>
+            </div>
+            <div className="p-4 bg-[#0d1c30]">
+              <p className="text-sm text-slate-400 leading-relaxed">
+                Every answer traces back to the exact page in your uploaded document, so you can verify and cross-reference.
+              </p>
+            </div>
+          </div>
+          <div className="grid grid-cols-[1fr_2fr]">
+            <div className="p-4 border-r border-white/7 bg-[#111f35]">
+              <p className="text-sm font-semibold text-slate-100">Syllabus-indexed library</p>
+            </div>
+            <div className="p-4 bg-[#0d1c30]">
+              <p className="text-sm text-slate-400 leading-relaxed">
+                Browse and contribute notes sorted by Department, Semester, and Subject code — the same structure your college uses.
+              </p>
+            </div>
           </div>
         </div>
       </section>
