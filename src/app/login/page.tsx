@@ -3,7 +3,7 @@
 import React, { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { GraduationCap, ArrowRight, Lock, Mail } from 'lucide-react';
+import { GraduationCap, Lock, Mail } from 'lucide-react';
 
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import { useSmartStudyStore } from '@/lib/store';
@@ -152,10 +152,10 @@ function LoginContent() {
             <span>Continue with Google</span>
           </button>
 
-          <div className="relative flex items-center justify-center">
-            <div className="border-t border-slate-200 w-full"></div>
-            <span className="bg-white px-2 text-[10px] uppercase font-semibold text-slate-400">or sign in with email</span>
-            <div className="border-t border-slate-200 w-full"></div>
+          <div className="relative flex items-center justify-center gap-3">
+            <div className="border-t border-white/10 flex-1"></div>
+            <span className="text-[11px] text-slate-600">or sign in with email</span>
+            <div className="border-t border-white/10 flex-1"></div>
           </div>
 
           <form onSubmit={handleLogin} className="space-y-4 text-xs">
@@ -195,10 +195,9 @@ function LoginContent() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs shadow-xs transition-colors"
+              className="w-full flex items-center justify-center py-2.5 rounded-md bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs transition-colors"
             >
-              <span>{loading ? 'Signing in...' : 'Sign In with Email'}</span>
-              <ArrowRight className="w-3.5 h-3.5" />
+              <span>{loading ? 'Signing in…' : 'Sign in'}</span>
             </button>
           </form>
         </div>
