@@ -22,7 +22,6 @@ export default function Navbar() {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
-  // Close Google-style menu when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
@@ -55,24 +54,21 @@ export default function Navbar() {
     : 'MP';
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-cyan-100/15 bg-[#091a2b]/85 shadow-2xl shadow-black/10 backdrop-blur-xl">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 h-15 flex items-center justify-between">
+    <header className="sticky top-0 z-50 w-full border-b border-white/8 bg-[#0a1628]/90 backdrop-blur-xl">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
         
-        {/* Brand Logo */}
-        <Link href="/" className="flex items-center gap-2.5 group">
-          <div className="w-8 h-8 rounded-lg bg-cyan-400/15 border border-cyan-200/25 flex items-center justify-center text-cyan-300 shadow-lg shadow-cyan-950/30">
+        {/* Brand */}
+        <Link href="/" className="flex items-center gap-2.5">
+          <div className="w-7 h-7 rounded-md bg-[#3b6fd4] flex items-center justify-center text-white">
             <GraduationCap className="w-4 h-4" />
           </div>
-          <div className="flex items-center gap-1.5">
-            <span className="font-bold text-base tracking-tight text-slate-100">
-              Smart Study
-            </span>
-            <span className="text-[10px] font-semibold tracking-wide text-cyan-300/80">ACADEMIC WORKSPACE</span>
-          </div>
+          <span className="font-semibold text-sm text-slate-100 tracking-tight">
+            Smart Study
+          </span>
         </Link>
 
         {/* Navigation Links */}
-        <nav className="hidden md:flex items-center gap-1">
+        <nav className="hidden md:flex items-center gap-0.5">
           {navLinks.map((link) => {
             const Icon = link.icon;
             const isActive = pathname === link.href || (link.href !== '/' && pathname.startsWith(link.href));
@@ -80,24 +76,24 @@ export default function Navbar() {
               <Link
                 key={link.name}
                 href={link.href}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
                   isActive
-                    ? 'bg-cyan-300/12 text-cyan-100 font-semibold'
-                    : 'text-slate-400 hover:text-slate-100 hover:bg-white/5'
+                    ? 'bg-white/8 text-slate-100'
+                    : 'text-slate-400 hover:text-slate-200 hover:bg-white/5'
                 }`}
               >
                 <Icon className={`w-3.5 h-3.5 ${
-                  link.isAdmin ? 'text-amber-600' : isActive ? 'text-indigo-600' : 'text-slate-400'
+                  link.isAdmin ? 'text-amber-500' : isActive ? 'text-[#4f8ef7]' : 'text-slate-500'
                 }`} />
                 <span>{link.name}</span>
                 {link.isPrivate && (
-                  <span className="inline-flex items-center gap-0.5 px-1.5 py-0.2 rounded text-[10px] bg-indigo-50 text-indigo-700 font-semibold border border-indigo-100">
+                  <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] bg-white/6 text-slate-400 border border-white/8">
                     <Lock className="w-2.5 h-2.5" />
                     <span>Private</span>
                   </span>
                 )}
                 {link.isAdmin && (
-                  <span className="inline-flex items-center gap-0.5 px-1.5 py-0.2 rounded text-[10px] bg-amber-50 text-amber-700 font-bold border border-amber-200">
+                  <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] bg-amber-950/60 text-amber-400 border border-amber-800/40">
                     Admin
                   </span>
                 )}
@@ -106,87 +102,82 @@ export default function Navbar() {
           })}
         </nav>
 
-        {/* Top-Right Controls: Google-style Account Avatar & Sign Out */}
+        {/* Account Controls */}
         <div className="flex items-center gap-3">
           {user.isLoggedIn ? (
             <div className="relative" ref={menuRef}>
-              {/* Google-style Circular Avatar Button */}
               <button
                 onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                className="relative rounded-full p-0.5 transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/50 hover:ring-3 hover:ring-slate-200"
+                className="relative rounded-full focus:outline-none focus:ring-2 focus:ring-[#3b6fd4]/50"
                 title={`${user.name} (${user.email})`}
                 aria-label="Account details"
                 aria-expanded={isUserMenuOpen}
                 aria-haspopup="true"
               >
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white shadow-2xs cursor-pointer ${
-                  user.role === 'superadmin' ? 'bg-amber-600' : 'bg-indigo-600'
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white cursor-pointer ${
+                  user.role === 'superadmin' ? 'bg-amber-600' : 'bg-[#3b6fd4]'
                 }`}>
                   {userInitials}
                 </div>
               </button>
 
-              {/* Google-style Minimal Account Card Popover */}
+              {/* Account Card Popover */}
               {isUserMenuOpen && (
                 <div 
-                  className="absolute right-0 mt-2.5 w-72 bg-white border border-slate-200 rounded-3xl shadow-xl p-5 z-50 text-center animate-in fade-in zoom-in-95 duration-100"
+                  className="absolute right-0 mt-2 w-68 bg-[#111f35] border border-white/10 rounded-xl shadow-2xl p-5 z-50 text-center"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  {/* User Email header */}
-                  <div className="text-[11px] font-medium text-slate-500 truncate mb-3">
+                  <div className="text-[11px] text-slate-500 truncate mb-3">
                     {user.email}
                   </div>
 
-                  {/* Large Centered Avatar */}
-                  <div className="relative mx-auto w-16 h-16 rounded-full flex items-center justify-center text-xl font-bold text-white shadow-sm mb-3 bg-gradient-to-tr from-indigo-600 to-indigo-500">
+                  <div className={`relative mx-auto w-14 h-14 rounded-full flex items-center justify-center text-lg font-bold text-white mb-3 ${
+                    user.role === 'superadmin' ? 'bg-amber-600' : 'bg-[#3b6fd4]'
+                  }`}>
                     {userInitials}
                   </div>
 
-                  {/* User Name */}
-                  <h3 className="text-sm font-bold text-slate-900 leading-tight">
+                  <h3 className="text-sm font-semibold text-slate-100 leading-tight">
                     {user.name}
                   </h3>
 
-                  {/* Superadmin Badge */}
                   {user.role === 'superadmin' ? (
                     <div className="mt-1.5 mb-4">
-                      <span className="inline-flex items-center gap-1 text-[10px] font-bold text-amber-700 bg-amber-50 px-2.5 py-0.5 rounded-full border border-amber-200">
-                        <ShieldCheck className="w-3 h-3 text-amber-600" />
+                      <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-amber-400 bg-amber-950/60 px-2 py-0.5 rounded border border-amber-800/40">
+                        <ShieldCheck className="w-3 h-3" />
                         Superadmin
                       </span>
                     </div>
                   ) : (
-                    <p className="text-[11px] text-slate-400 mt-0.5 mb-4">Student Account</p>
+                    <p className="text-[11px] text-slate-500 mt-0.5 mb-4">Student account</p>
                   )}
 
-                  {/* Action Links */}
-                  <div className="space-y-1.5 pt-1 border-t border-slate-100">
+                  <div className="space-y-1 pt-1 border-t border-white/8">
                     <Link
                       href="/dashboard"
                       onClick={() => setIsUserMenuOpen(false)}
-                      className="w-full flex items-center justify-center gap-1.5 py-2 px-3 rounded-full text-xs font-semibold text-slate-300 hover:bg-white/10 transition-colors"
+                      className="w-full flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg text-xs font-medium text-slate-300 hover:bg-white/6 transition-colors"
                     >
-                      <LayoutDashboard className="w-3.5 h-3.5 text-slate-400" />
-                      <span>My Dashboard</span>
+                      <LayoutDashboard className="w-3.5 h-3.5 text-slate-500" />
+                      <span>My dashboard</span>
                     </Link>
 
                     {user.role === 'superadmin' && (
                       <Link
                         href="/admin"
                         onClick={() => setIsUserMenuOpen(false)}
-                        className="w-full flex items-center justify-center gap-1.5 py-2 px-3 rounded-full text-xs font-semibold text-amber-800 bg-amber-50 hover:bg-amber-100 transition-colors"
+                        className="w-full flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg text-xs font-medium text-amber-400 bg-amber-950/40 hover:bg-amber-950/60 transition-colors"
                       >
-                        <ShieldCheck className="w-3.5 h-3.5 text-amber-600" />
-                        <span>Admin Console</span>
+                        <ShieldCheck className="w-3.5 h-3.5" />
+                        <span>Admin console</span>
                       </Link>
                     )}
 
-                    {/* Google-style Clean Sign Out Button */}
                     <button
                       onClick={handleSignOut}
-                      className="w-full mt-2 flex items-center justify-center gap-2 py-2 px-4 rounded-full border border-slate-200 hover:bg-slate-50 text-slate-700 hover:text-rose-600 text-xs font-semibold transition-colors shadow-2xs hover:border-slate-300"
+                      className="w-full mt-1 flex items-center justify-center gap-2 py-2 px-4 rounded-lg border border-white/8 hover:border-rose-800/40 text-slate-400 hover:text-rose-400 text-xs font-medium transition-colors"
                     >
-                      <LogOut className="w-3.5 h-3.5 text-slate-400 hover:text-rose-500" />
+                      <LogOut className="w-3.5 h-3.5" />
                       <span>Sign out</span>
                     </button>
                   </div>
@@ -197,16 +188,16 @@ export default function Navbar() {
             <div className="flex items-center gap-2">
               <Link
                 href="/login"
-                className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 transition-colors"
+                className="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-md border border-white/10 text-slate-300 hover:text-slate-100 hover:border-white/20 transition-colors"
               >
-                <LogIn className="w-3.5 h-3.5 text-slate-500" />
-                <span>Sign In</span>
+                <LogIn className="w-3.5 h-3.5" />
+                <span>Sign in</span>
               </Link>
               <Link
                 href="/signup"
-                className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white shadow-xs transition-colors"
+                className="inline-flex items-center text-xs font-semibold px-3 py-1.5 rounded-md bg-[#3b6fd4] hover:bg-[#4a7fe8] text-white transition-colors"
               >
-                <span>Get Started</span>
+                Get started
               </Link>
             </div>
           )}
@@ -214,8 +205,8 @@ export default function Navbar() {
 
       </div>
 
-      {/* Mobile nav bar */}
-      <div className="md:hidden flex items-center justify-around border-t border-slate-100 py-1.5 px-2 bg-white">
+      {/* Mobile bottom nav */}
+      <div className="md:hidden flex items-center justify-around border-t border-white/8 py-1.5 px-2 bg-[#0d1c30]">
         {navLinks.map((link) => {
           const Icon = link.icon;
           const isActive = pathname === link.href || (link.href !== '/' && pathname.startsWith(link.href));
@@ -223,8 +214,8 @@ export default function Navbar() {
             <Link
               key={link.name}
               href={link.href}
-              className={`flex flex-col items-center gap-1 text-[11px] p-1.5 rounded-lg ${
-                isActive ? 'text-indigo-600 font-semibold' : 'text-slate-500'
+              className={`flex flex-col items-center gap-1 text-[11px] p-1.5 rounded-md ${
+                isActive ? 'text-[#4f8ef7]' : 'text-slate-500'
               }`}
             >
               <Icon className="w-4 h-4" />
