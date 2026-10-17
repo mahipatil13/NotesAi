@@ -87,6 +87,9 @@ function LoginContent() {
         provider: 'google',
         options: {
           redirectTo: `${base}/login?redirect=${encodeURIComponent(destination)}`,
+          queryParams: {
+            prompt: 'select_account',
+          },
         },
       });
       if (error) {

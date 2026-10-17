@@ -107,6 +107,9 @@ function SignupContent() {
         provider: 'google',
         options: {
           redirectTo: `${base}/signup?redirect=${encodeURIComponent(destination)}`,
+          queryParams: {
+            prompt: 'select_account',
+          },
         },
       });
       if (error) {
