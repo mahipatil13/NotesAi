@@ -376,27 +376,20 @@ export default function LibraryPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <div>
-            <div className="flex items-center gap-2 mb-1">
-              <span className="text-xs font-semibold px-2 py-0.5 rounded bg-indigo-50 text-indigo-700 border border-indigo-100">
-                Open Community
-              </span>
-              <span className="text-xs text-slate-400">·</span>
-              <span className="text-xs text-slate-500">{notes.length} total shared notes</span>
-            </div>
             <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
-              Community Notes Library
+              Community notes library
             </h1>
             <p className="text-slate-500 text-xs sm:text-sm mt-0.5">
-              Browse, filter by department, and open original lecture PDFs side-by-side with AI summaries.
+              Browse, filter by department, and open lecture PDFs side-by-side with AI summaries. {notes.length} notes shared.
             </p>
           </div>
 
           <button
             onClick={() => setIsUploadOpen(true)}
-            className="self-start sm:self-auto inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold shadow-xs transition-colors"
+            className="self-start sm:self-auto inline-flex items-center gap-1.5 px-4 py-2 rounded-md bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold transition-colors"
           >
             <PlusCircle className="w-4 h-4" />
-            <span>Contribute Notes</span>
+            <span>Contribute notes</span>
           </button>
         </div>
 
@@ -439,19 +432,12 @@ export default function LibraryPage() {
                   <UploadCloud className="w-6 h-6" />
                 </div>
                 <div>
-                  <div className="flex flex-wrap items-center gap-2 justify-center sm:justify-start">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-100">
-                      Contribution Section
-                    </span>
-                    <span className="text-[11px] text-slate-400 font-medium">
-                      PDF, DOCX, PPTX, TXT, MD
-                    </span>
-                  </div>
-                  <h2 className="text-sm sm:text-base font-bold text-slate-900 mt-1">
-                    Drag and drop your notes or syllabus documents here
+                  <span className="text-[11px] text-slate-500">PDF, DOCX, PPTX, TXT, MD</span>
+                  <h2 className="text-sm sm:text-base font-semibold text-slate-900 mt-1">
+                    Drag and drop your notes here, or click to browse
                   </h2>
                   <p className="text-xs text-slate-500 mt-0.5">
-                    Contribute class notes, handouts, or past questions. Auto-generates AI summaries and queues for Superadmin approval.
+                    Contribute class notes, handouts, or past questions. Queued for approval before going public.
                   </p>
                 </div>
               </div>
@@ -505,7 +491,7 @@ export default function LibraryPage() {
                 <option value="all">All Departments ({departments.length})</option>
                 {departments.map((dept) => (
                   <option key={dept.id} value={dept.id}>
-                    {dept.code} — {dept.name}
+                  {dept.code}: {dept.name}
                   </option>
                 ))}
               </select>
@@ -643,9 +629,9 @@ export default function LibraryPage() {
           </div>
 
           {deleteNotice && (
-            <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-700 font-semibold animate-in fade-in flex items-center justify-between">
+            <div className="p-3 bg-rose-950/30 border border-rose-800/40 rounded-lg text-xs text-rose-400 font-medium flex items-center justify-between">
               <span>{deleteNotice}</span>
-              <button onClick={() => setDeleteNotice(null)} className="text-rose-500 hover:text-rose-700">✕</button>
+              <button onClick={() => setDeleteNotice(null)} className="text-rose-500 hover:text-rose-300">✕</button>
             </div>
           )}
 
