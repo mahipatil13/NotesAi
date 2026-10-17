@@ -98,14 +98,15 @@ function SignupContent() {
         setLoading(false);
         return;
       }
-      // Redirect to /auth/callback which exchanges the OAuth code for a real session.
+      // Return to this client route so Supabase can process both PKCE codes and
+      // implicit-flow tokens in the browser before the store syncs the session.
       const redirect = searchParams.get('redirect');
       const base = typeof window !== 'undefined' ? window.location.origin : '';
       const destination = redirect && redirect.startsWith('/') ? redirect : '/dashboard';
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${base}/auth/callback?next=${encodeURIComponent(destination)}`,
+          redirectTo: `${base}/signup?redirect=${encodeURIComponent(destination)}`,
         },
       });
       if (error) {

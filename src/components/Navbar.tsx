@@ -43,8 +43,8 @@ export default function Navbar() {
     ...(user.isLoggedIn && user.role === 'superadmin' ? [{ name: 'Superadmin', href: '/admin', icon: ShieldCheck, isAdmin: true }] : []),
   ];
 
-  const handleSignOut = () => {
-    logoutUser();
+  const handleSignOut = async () => {
+    await logoutUser();
     setIsUserMenuOpen(false);
     router.push('/login');
   };

@@ -51,6 +51,7 @@ function userKey(base: string, email: string): string {
   return `${base}__${safe}`;
 }
 
+
 // Superadmin emails are read from the NEXT_PUBLIC_SUPERADMIN_EMAILS env variable at runtime.
 // Format: a comma-separated list, e.g. "admin@example.com,owner@example.com"
 // Never commit real email addresses to source control — set this in your .env.local file.
@@ -332,7 +333,7 @@ export function useSmartStudyStore() {
     if (!isSupabaseConfigured()) return;
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session?.user) {
+      if ((event === 'INITIAL_SESSION' || event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session?.user) {
         const userEmail = session.user.email || '';
         if (!userEmail) return;
 
@@ -436,10 +437,13 @@ export function useSmartStudyStore() {
     return updated;
   };
 
-  const logoutUser = () => {
+  const logoutUser = async () => {
     if (isSupabaseConfigured()) {
       try {
-        supabase.auth.signOut();
+        const { error } = await supabase.auth.signOut();
+        if (error) {
+          console.error('Error signing out of Supabase', error);
+        }
       } catch (e) {
         console.error('Error signing out of Supabase', e);
       }
@@ -877,4 +881,3 @@ export function useSmartStudyStore() {
     incrementUsage,
   };
 }
-

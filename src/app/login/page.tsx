@@ -15,7 +15,11 @@ function LoginContent() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [errorMsg, setErrorMsg] = useState<string | null>(() =>
+    searchParams.get('error') === 'auth_callback_failed'
+      ? 'Google sign-in could not be completed. Please try again.'
+      : null
+  );
 
   // If the user is already logged in, send them where they were going (or dashboard)
   useEffect(() => {
@@ -74,15 +78,15 @@ function LoginContent() {
         setLoading(false);
         return;
       }
-      // Redirect to /auth/callback which exchanges the OAuth code for a real session.
-      // Pass `next` so the callback knows where to send the user after auth.
+      // Return to this client route so Supabase can process both PKCE codes and
+      // implicit-flow tokens in the browser before the store syncs the session.
       const redirect = searchParams.get('redirect');
       const base = typeof window !== 'undefined' ? window.location.origin : '';
       const destination = redirect && redirect.startsWith('/') ? redirect : '/dashboard';
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${base}/auth/callback?next=${encodeURIComponent(destination)}`,
+          redirectTo: `${base}/login?redirect=${encodeURIComponent(destination)}`,
         },
       });
       if (error) {
