@@ -177,18 +177,6 @@ export function useSmartStudyStore() {
         Promise.resolve().then(() => setStreak(DEFAULT_STREAK));
       }
 
-      const storedDepts = localStorage.getItem(STORAGE_KEYS.DEPARTMENTS);
-      const storedSubjects = localStorage.getItem(STORAGE_KEYS.SUBJECTS);
-      const storedNotes = localStorage.getItem(STORAGE_KEYS.NOTES);
-      const storedGroups = localStorage.getItem(STORAGE_KEYS.STUDY_GROUPS);
-
-      // Batch all remaining setState calls after the synchronous read pass
-      Promise.resolve().then(() => {
-        if (storedDepts) setDepartments(JSON.parse(storedDepts));
-        if (storedSubjects) setSubjects(JSON.parse(storedSubjects));
-        if (storedNotes) setNotes(JSON.parse(storedNotes));
-        if (storedGroups) setStudyGroups(JSON.parse(storedGroups));
-      });
     } catch (e) {
       console.error('Error loading stored Smart Study state', e);
     }
@@ -212,6 +200,15 @@ export function useSmartStudyStore() {
 
     const storedUsage = localStorage.getItem(userKey(STORAGE_KEYS.USAGE, email));
     setUsage(storedUsage ? JSON.parse(storedUsage) : { docsCount: 0, maxDocs: 3, aiCount: 0, maxAi: 5, plan: 'Free Plan' });
+
+    const storedDepts = localStorage.getItem(userKey(STORAGE_KEYS.DEPARTMENTS, email));
+    const storedSubjects = localStorage.getItem(userKey(STORAGE_KEYS.SUBJECTS, email));
+    const storedNotes = localStorage.getItem(userKey(STORAGE_KEYS.NOTES, email));
+    const storedGroups = localStorage.getItem(userKey(STORAGE_KEYS.STUDY_GROUPS, email));
+    setDepartments(storedDepts ? JSON.parse(storedDepts) : INITIAL_DEPARTMENTS);
+    setSubjects(storedSubjects ? JSON.parse(storedSubjects) : INITIAL_SUBJECTS);
+    setNotes(storedNotes ? JSON.parse(storedNotes) : INITIAL_NOTES);
+    setStudyGroups(storedGroups ? JSON.parse(storedGroups) : INITIAL_STUDY_GROUPS);
   }
 
   // Save changes to localStorage
@@ -237,17 +234,23 @@ export function useSmartStudyStore() {
 
   const saveDepartments = (updated: Department[]) => {
     setDepartments(updated);
-    if (typeof window !== 'undefined') localStorage.setItem(STORAGE_KEYS.DEPARTMENTS, JSON.stringify(updated));
+    if (typeof window !== 'undefined' && user.email) {
+      localStorage.setItem(userKey(STORAGE_KEYS.DEPARTMENTS, user.email), JSON.stringify(updated));
+    }
   };
 
   const saveSubjects = (updated: LibrarySubject[]) => {
     setSubjects(updated);
-    if (typeof window !== 'undefined') localStorage.setItem(STORAGE_KEYS.SUBJECTS, JSON.stringify(updated));
+    if (typeof window !== 'undefined' && user.email) {
+      localStorage.setItem(userKey(STORAGE_KEYS.SUBJECTS, user.email), JSON.stringify(updated));
+    }
   };
 
   const saveNotes = (updated: LibraryNote[]) => {
     setNotes(updated);
-    if (typeof window !== 'undefined') localStorage.setItem(STORAGE_KEYS.NOTES, JSON.stringify(updated));
+    if (typeof window !== 'undefined' && user.email) {
+      localStorage.setItem(userKey(STORAGE_KEYS.NOTES, user.email), JSON.stringify(updated));
+    }
   };
 
   const savePersonalSubjects = (updated: PersonalSubject[]) => {
@@ -273,7 +276,9 @@ export function useSmartStudyStore() {
 
   const saveStudyGroups = (updated: StudyGroup[]) => {
     setStudyGroups(updated);
-    if (typeof window !== 'undefined') localStorage.setItem(STORAGE_KEYS.STUDY_GROUPS, JSON.stringify(updated));
+    if (typeof window !== 'undefined' && user.email) {
+      localStorage.setItem(userKey(STORAGE_KEYS.STUDY_GROUPS, user.email), JSON.stringify(updated));
+    }
   };
 
   const incrementUsage = (type: 'docs' | 'ai') => {
@@ -295,17 +300,22 @@ export function useSmartStudyStore() {
     let isMounted = true;
 
     async function loadSupabaseNotes() {
+      if (!user.email) return;
       const remoteNotes = await fetchNotesFromSupabase();
-      if (remoteNotes && remoteNotes.length > 0 && isMounted) {
+      const accountNotes = remoteNotes?.filter((note) =>
+        note.uploaderEmail?.toLowerCase() === user.email.toLowerCase() ||
+        note.uploaderId === user.id
+      );
+      if (accountNotes && accountNotes.length > 0 && isMounted) {
         setNotes((prevLocalNotes) => {
           const map = new Map<string, LibraryNote>();
-          remoteNotes.forEach((n) => map.set(n.id, n));
+          accountNotes.forEach((n) => map.set(n.id, n));
           prevLocalNotes.forEach((n) => {
             if (!map.has(n.id)) map.set(n.id, n);
           });
           const merged = Array.from(map.values());
           if (typeof window !== 'undefined') {
-            localStorage.setItem(STORAGE_KEYS.NOTES, JSON.stringify(merged));
+            localStorage.setItem(userKey(STORAGE_KEYS.NOTES, user.email), JSON.stringify(merged));
           }
           return merged;
         });
@@ -323,7 +333,7 @@ export function useSmartStudyStore() {
       isMounted = false;
       unsubscribe();
     };
-  }, []);
+  }, [user.email, user.id]);
 
   // Supabase Auth session listener
   // Handles both email/password logins AND OAuth (Google) logins where the user
