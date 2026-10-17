@@ -35,14 +35,14 @@ export default function AuthGuard({ children, requireAdmin = false }: AuthGuardP
   // If still loading store state from localStorage / Supabase session
   if (!isLoaded) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-[#f8fafc] text-slate-900">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-[#0a1628]">
         <div className="flex flex-col items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-xs">
-            <GraduationCap className="w-6 h-6 animate-pulse" />
+          <div className="w-9 h-9 rounded-md bg-[#3b6fd4] flex items-center justify-center text-white">
+            <GraduationCap className="w-5 h-5" />
           </div>
-          <div className="flex items-center gap-2 text-xs text-slate-500 font-medium">
-            <Loader2 className="w-4 h-4 animate-spin text-indigo-600" />
-            <span>Verifying session security...</span>
+          <div className="flex items-center gap-2 text-xs text-slate-500">
+            <Loader2 className="w-4 h-4 animate-spin text-[#3b6fd4]" />
+            <span>Verifying session…</span>
           </div>
         </div>
       </div>
